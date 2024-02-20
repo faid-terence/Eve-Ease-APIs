@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, Unique } from 'typeorm';
 
 @Entity()
-@Unique(['email']) // Ensures that the email column is unique
+@Unique(['email']) 
 export default class User {
   @PrimaryGeneratedColumn()
   id: number;
@@ -20,4 +20,7 @@ export default class User {
 
   @Column()
   profilePhoto: string;
+
+  @Column()
+  password: string
 }
