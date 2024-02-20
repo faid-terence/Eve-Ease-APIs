@@ -14,7 +14,7 @@ import { UserModule } from './user/user.module';
       username: 'postgres',
       password: 'thestunna420',
       database: 'TickNet',
-      entities: ["dist/**/*.entity.js"],
+      entities: ['dist/**/*.entity.js'],
       synchronize: true,
     }),
     AuthModule,

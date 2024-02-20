@@ -2,6 +2,9 @@ import {
   BadRequestException,
   ConflictException,
   Injectable,
+  InternalServerErrorException,
+  NotAcceptableException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -20,6 +23,12 @@ export class AuthService {
 
   async registerUser(registerDto: RegisterUserDTO): Promise<User> {
     const { email, phoneNumber, password } = registerDto;
+
+    // Check if password is provided
+    if (!password) {
+      throw new BadRequestException('Password is required');
+    }
+
     const user = await this.userRepository
       .createQueryBuilder('user')
       .where('user.email = :email OR user.phoneNumber = :phoneNumber', {
@@ -34,17 +43,21 @@ export class AuthService {
       );
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    try {
+      const hashedPassword = await bcrypt.hash(password, 10);
 
-    const newUser = this.userRepository.create({
-      fullNames: registerDto.fullNames,
-      email,
-      country: registerDto.country,
-      phoneNumber,
-      password: hashedPassword,
-      profilePhoto: registerDto.profilePhoto,
-    });
-    return await this.userRepository.save(newUser);
+      const newUser = this.userRepository.create({
+        fullNames: registerDto.fullNames,
+        email,
+        country: registerDto.country,
+        phoneNumber,
+        password: hashedPassword,
+        profilePhoto: registerDto.profilePhoto,
+      });
+      return await this.userRepository.save(newUser);
+    } catch (error) {
+      throw new InternalServerErrorException('Error creating user');
+    }
   }
 
   async loginUser(
@@ -52,7 +65,7 @@ export class AuthService {
   ): Promise<{ message: string; token?: string }> {
     const { email, phoneNumber, password } = loginDto;
     if ((!phoneNumber && !email) || !password) {
-      throw new BadRequestException('Invalid Inputs');
+      throw new NotAcceptableException('Invalid Inputs');
     }
     let existUser;
 
@@ -64,7 +77,7 @@ export class AuthService {
     }
     const passwordMatch = await bcrypt.compare(password, existUser.password);
     if (!passwordMatch) {
-      throw new BadRequestException('Invalid Credentials');
+      throw new UnauthorizedException('Invalid Credentials');
     }
 
     const userToken = this.jwtServices.sign({
@@ -73,8 +86,8 @@ export class AuthService {
     });
 
     return {
-      message: "Login successful!",
-      token: userToken
-    }
+      message: 'Login successful!',
+      token: userToken,
+    };
   }
 }
