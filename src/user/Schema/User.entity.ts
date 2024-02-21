@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, Unique } from 'typeorm';
 
 @Entity()
-@Unique(['email']) 
+@Unique(['email'])
 export default class User {
   @PrimaryGeneratedColumn()
   id: number;
@@ -22,5 +22,8 @@ export default class User {
   profilePhoto: string;
 
   @Column()
-  password: string
+  password: string;
+
+  @Column()
+  verificationToken: string;
 }

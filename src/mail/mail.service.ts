@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
+import { use } from 'passport';
 import { ConfigService } from '@nestjs/config';
-
 @Injectable()
 export class MailService {
   constructor(
@@ -9,11 +9,7 @@ export class MailService {
     private configService: ConfigService,
   ) {}
 
-  async sendVerificationEmail(
-    user: string,
-    verificationToken: string,
-    email: string,
-  ) {
+  async sendUserEmail(user: string, verificationToken: string, email: string) {
     try {
       const appName = this.configService.get<string>('APP_NAME');
       const verificationLink = `http://localhost:3000/auth/verify/${verificationToken}`;
@@ -40,7 +36,7 @@ export class MailService {
                 `,
       });
     } catch (error) {
-      // Handle error
+      console.error('Error sending email:', error);
     }
   }
 }

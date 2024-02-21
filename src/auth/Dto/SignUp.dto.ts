@@ -4,5 +4,6 @@ export default class RegisterUserDTO {
   country: string;
   phoneNumber: string;
   profilePhoto: string;
-  password: string
+  password: string;
+  verificationToken: string;
 }
