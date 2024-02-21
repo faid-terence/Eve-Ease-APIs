@@ -14,7 +14,7 @@ import { MailModule } from './mail/mail.module';
       port: 5432,
       username: 'postgres',
       password: 'thestunna420',
-      database: 'TickNet',
+      database: 'Events',
       entities: ['dist/**/*.entity.js'],
       synchronize: true,
     }),

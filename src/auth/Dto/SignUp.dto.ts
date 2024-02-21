@@ -6,4 +6,5 @@ export default class RegisterUserDTO {
   profilePhoto: string;
   password: string;
   verificationToken: string;
+  isVerified: boolean;
 }

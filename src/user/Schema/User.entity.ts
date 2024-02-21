@@ -3,6 +3,7 @@ import { Entity, PrimaryGeneratedColumn, Column, Unique } from 'typeorm';
 @Entity()
 @Unique(['email'])
 export default class User {
+  [x: string]: any;
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -26,4 +27,7 @@ export default class User {
 
   @Column()
   verificationToken: string;
+
+  @Column({ default: false })
+  isVerified: boolean;
 }
