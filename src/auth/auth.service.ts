@@ -13,6 +13,7 @@ import RegisterUserDTO from './Dto/SignUp.dto';
 import * as bcrypt from 'bcrypt';
 import LoginUserDto from './Dto/Login.dto';
 import { JwtService } from '@nestjs/jwt';
+import LoginResponseDto from './Dto/LoginResponse.dto';
 
 @Injectable()
 export class AuthService {
@@ -62,7 +63,7 @@ export class AuthService {
 
   async loginUser(
     loginDto: LoginUserDto,
-  ): Promise<{ message: string; token?: string }> {
+  ): Promise<{ message: string; token?: string; data?: LoginResponseDto }> {
     const { email, phoneNumber, password } = loginDto;
     if ((!phoneNumber && !email) || !password) {
       throw new NotAcceptableException('Invalid Inputs');
@@ -83,11 +84,16 @@ export class AuthService {
     const userToken = this.jwtServices.sign({
       id: existUser.id,
       name: existUser.fullNames,
+      photo: existUser.profilePhoto,
     });
 
     return {
       message: 'Login successful!',
       token: userToken,
+      data: {
+        fullNames: existUser.fullNames,
+        profilePhoto: existUser.profilePhoto,
+      },
     };
   }
 }
