@@ -4,6 +4,7 @@ import {
   Injectable,
   InternalServerErrorException,
   NotAcceptableException,
+  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { Repository } from 'typeorm';
@@ -14,9 +15,10 @@ import * as bcrypt from 'bcrypt';
 import LoginUserDto from './Dto/Login.dto';
 import { JwtService } from '@nestjs/jwt';
 import LoginResponseDto from './Dto/LoginResponse.dto';
-
+import { v4 as uuidv4 } from 'uuid';
 import { randomBytes } from 'crypto';
 import { MailService } from 'src/mail/mail.service';
+import { use } from 'passport';
 
 @Injectable()
 export class AuthService {
@@ -26,12 +28,12 @@ export class AuthService {
     private mailerServices: MailService,
   ) {}
 
-  async registerUser(
-    registerDto: RegisterUserDTO,
-  ): Promise<{ message: string }> {
+  async registerUser(registerDto: RegisterUserDTO): Promise<User> {
     const { email, phoneNumber, password } = registerDto;
-    if ((!email && !phoneNumber) || !password) {
-      throw new BadRequestException('Invalid inputs');
+
+    // Check if password is provided
+    if (!password) {
+      throw new BadRequestException('Password is required');
     }
 
     const user = await this.userRepository
@@ -50,7 +52,7 @@ export class AuthService {
 
     try {
       const hashedPassword = await bcrypt.hash(password, 10);
-      const verificationToken = await this.generateVerificationToken(10);
+      const verificationToken = uuidv4();
 
       const newUser = this.userRepository.create({
         fullNames: registerDto.fullNames,
@@ -68,9 +70,9 @@ export class AuthService {
         registerDto.email,
       );
 
-      return {
-        message: `Thank you for registering with us. An email containing a verification link has been sent to ${email}! . Please check your inbox to complete the registration process`,
-      };
+      const savedUser = await this.userRepository.save(newUser);
+
+      return savedUser;
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }
@@ -116,5 +118,21 @@ export class AuthService {
     return randomBytes(Math.ceil(length / 2))
       .toString('hex')
       .slice(0, length);
+  }
+
+  async verifyUserToken(token: string): Promise<{ message: string }> {
+    const user = await this.userRepository.findOne({
+      where: { verificationToken: token },
+    });
+    if (!user) {
+      throw new NotFoundException('Invalid verification token');
+    }
+    user.isVerified = true;
+
+    await this.userRepository.save(user);
+
+    return {
+      message: 'Email Verification Successful',
+    };
   }
 }
