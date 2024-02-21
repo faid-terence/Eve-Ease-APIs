@@ -14,6 +14,7 @@ import * as bcrypt from 'bcrypt';
 import LoginUserDto from './Dto/Login.dto';
 import { JwtService } from '@nestjs/jwt';
 import LoginResponseDto from './Dto/LoginResponse.dto';
+import { randomBytes } from 'crypto';
 
 @Injectable()
 export class AuthService {
@@ -24,10 +25,8 @@ export class AuthService {
 
   async registerUser(registerDto: RegisterUserDTO): Promise<User> {
     const { email, phoneNumber, password } = registerDto;
-
-    // Check if password is provided
-    if (!password) {
-      throw new BadRequestException('Password is required');
+    if ((!email && !phoneNumber) || !password) {
+      throw new BadRequestException('Invalid inputs');
     }
 
     const user = await this.userRepository
@@ -46,6 +45,7 @@ export class AuthService {
 
     try {
       const hashedPassword = await bcrypt.hash(password, 10);
+      const verificationToken = await this.generateVerificationToken(10);
 
       const newUser = this.userRepository.create({
         fullNames: registerDto.fullNames,
@@ -54,10 +54,11 @@ export class AuthService {
         phoneNumber,
         password: hashedPassword,
         profilePhoto: registerDto.profilePhoto,
+        verificationToken: verificationToken,
       });
       return await this.userRepository.save(newUser);
     } catch (error) {
-      throw new InternalServerErrorException('Error creating user');
+      throw new InternalServerErrorException(error.message);
     }
   }
 
@@ -95,5 +96,11 @@ export class AuthService {
         profilePhoto: existUser.profilePhoto,
       },
     };
+  }
+
+  async generateVerificationToken(length: number): Promise<string> {
+    return randomBytes(Math.ceil(length / 2))
+      .toString('hex')
+      .slice(0, length);
   }
 }
