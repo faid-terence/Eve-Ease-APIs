@@ -14,16 +14,21 @@ import * as bcrypt from 'bcrypt';
 import LoginUserDto from './Dto/Login.dto';
 import { JwtService } from '@nestjs/jwt';
 import LoginResponseDto from './Dto/LoginResponse.dto';
+
 import { randomBytes } from 'crypto';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     private jwtServices: JwtService,
+    private mailerServices: MailService,
   ) {}
 
-  async registerUser(registerDto: RegisterUserDTO): Promise<User> {
+  async registerUser(
+    registerDto: RegisterUserDTO,
+  ): Promise<{ message: string }> {
     const { email, phoneNumber, password } = registerDto;
     if ((!email && !phoneNumber) || !password) {
       throw new BadRequestException('Invalid inputs');
@@ -56,7 +61,16 @@ export class AuthService {
         profilePhoto: registerDto.profilePhoto,
         verificationToken: verificationToken,
       });
-      return await this.userRepository.save(newUser);
+
+      await this.mailerServices.sendUserEmail(
+        registerDto.fullNames,
+        verificationToken,
+        registerDto.email,
+      );
+
+      return {
+        message: `Thank you for registering with us. An email containing a verification link has been sent to ${email}! . Please check your inbox to complete the registration process`,
+      };
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }
