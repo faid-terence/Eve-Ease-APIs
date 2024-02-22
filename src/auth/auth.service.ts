@@ -31,8 +31,7 @@ export class AuthService {
   async registerUser(registerDto: RegisterUserDTO): Promise<User> {
     const { email, phoneNumber, password } = registerDto;
 
-    // Check if password is provided
-    if (!password) {
+    if ((!email && !phoneNumber) || !password) {
       throw new BadRequestException('Password is required');
     }
 
