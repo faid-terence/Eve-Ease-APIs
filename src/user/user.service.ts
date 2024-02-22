@@ -2,6 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import User from './Schema/User.entity';
 import { Repository } from 'typeorm';
+import UpdateUserDTO from './DTO/UpdateUser.dto';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UserService {
@@ -27,5 +29,39 @@ export class UserService {
       }
       return user;
     } catch (error) {}
+  }
+
+  async updateUserProfile(userId: number, updateUserInfo: UpdateUserDTO) {
+    const user = await this.userRepository.findOneBy({ id: userId });
+    if (!user) {
+      throw new NotFoundException(`User with id ${userId} does not exist`);
+    }
+    if (updateUserInfo.fullNames) {
+      user.fullNames = updateUserInfo.fullNames;
+    }
+    if (updateUserInfo.email) {
+      user.email = updateUserInfo.email;
+    }
+    if (updateUserInfo.country) {
+      user.country = updateUserInfo.country;
+    }
+
+    if (updateUserInfo.phoneNumber) {
+      user.phoneNumber = updateUserInfo.phoneNumber;
+    }
+    if (updateUserInfo.profilePhoto) {
+      user.profilePhoto = updateUserInfo.profilePhoto;
+    }
+    if (updateUserInfo.password) {
+      const hashedPassword = await bcrypt.hash(updateUserInfo.password, 10);
+      user.password = hashedPassword;
+    }
+
+    const updatedUser = await this.userRepository.save(user);
+
+    return {
+      message: 'User Updated Successful',
+      updatedUser,
+    };
   }
 }
