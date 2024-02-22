@@ -93,9 +93,14 @@ export class AuthService {
     if (phoneNumber) {
       existUser = await this.userRepository.findOneBy({ phoneNumber });
     }
+
     const passwordMatch = await bcrypt.compare(password, existUser.password);
     if (!passwordMatch) {
       throw new UnauthorizedException('Invalid Credentials');
+    }
+
+    if (!existUser.isVerified) {
+      throw new UnauthorizedException('Please verify your email');
     }
 
     const userToken = this.jwtServices.sign({
