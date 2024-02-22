@@ -23,45 +23,68 @@ export class UserService {
 
   async getUserById(userId: number): Promise<User> {
     try {
-      const user = await this.userRepository.findOneBy({ id: userId });
+      const user = await this.userRepository.findOne({ where: { id: userId } });
       if (!user) {
         throw new NotFoundException(`User with id ${userId} does not exist`);
       }
       return user;
-    } catch (error) {}
+    } catch (error) {
+      throw new NotFoundException(
+        `Error fetching user with id ${userId}: ${error.message}`,
+      );
+    }
   }
 
   async updateUserProfile(userId: number, updateUserInfo: UpdateUserDTO) {
+    try {
+      const user = await this.userRepository.findOneBy({ id: userId });
+      if (!user) {
+        throw new NotFoundException(`User with id ${userId} does not exist`);
+      }
+
+      if (updateUserInfo.fullNames) {
+        user.fullNames = updateUserInfo.fullNames;
+      }
+      if (updateUserInfo.email) {
+        user.email = updateUserInfo.email;
+      }
+      if (updateUserInfo.country) {
+        user.country = updateUserInfo.country;
+      }
+      if (updateUserInfo.phoneNumber) {
+        user.phoneNumber = updateUserInfo.phoneNumber;
+      }
+      if (updateUserInfo.profilePhoto) {
+        user.profilePhoto = updateUserInfo.profilePhoto;
+      }
+      if (updateUserInfo.password) {
+        const hashedPassword = await bcrypt.hash(updateUserInfo.password, 10);
+        user.password = hashedPassword;
+      }
+
+      const updatedUser = await this.userRepository.save(user);
+
+      return {
+        message: 'User Updated Successfully',
+        updatedUser,
+      };
+    } catch (error) {
+      throw new Error(
+        `Error updating user with id ${userId}: ${error.message}`,
+      );
+    }
+  }
+
+  async deleteUser(userId: number): Promise<{ message: string }> {
     const user = await this.userRepository.findOneBy({ id: userId });
     if (!user) {
       throw new NotFoundException(`User with id ${userId} does not exist`);
     }
-    if (updateUserInfo.fullNames) {
-      user.fullNames = updateUserInfo.fullNames;
-    }
-    if (updateUserInfo.email) {
-      user.email = updateUserInfo.email;
-    }
-    if (updateUserInfo.country) {
-      user.country = updateUserInfo.country;
-    }
 
-    if (updateUserInfo.phoneNumber) {
-      user.phoneNumber = updateUserInfo.phoneNumber;
-    }
-    if (updateUserInfo.profilePhoto) {
-      user.profilePhoto = updateUserInfo.profilePhoto;
-    }
-    if (updateUserInfo.password) {
-      const hashedPassword = await bcrypt.hash(updateUserInfo.password, 10);
-      user.password = hashedPassword;
-    }
-
-    const updatedUser = await this.userRepository.save(user);
+    await this.userRepository.delete(user);
 
     return {
-      message: 'User Updated Successful',
-      updatedUser,
+      message: 'User deleted Succesful',
     };
   }
 }
