@@ -18,4 +18,14 @@ export class UserService {
       return users;
     } catch (error) {}
   }
+
+  async getUserById(userId: number): Promise<User> {
+    try {
+      const user = await this.userRepository.findOneBy({ id: userId });
+      if (!user) {
+        throw new NotFoundException(`User with id ${userId} does not exist`);
+      }
+      return user;
+    } catch (error) {}
+  }
 }
