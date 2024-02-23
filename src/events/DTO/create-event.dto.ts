@@ -4,4 +4,5 @@ export default class CreateEventDTO {
   EventLocation: string;
   EventVenue: string;
   EventDate: Date;
+  EventPhoto: string
 }

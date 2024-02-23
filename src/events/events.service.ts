@@ -16,6 +16,7 @@ export class EventsService {
       EventName,
       EventDescription,
       EventLocation,
+      EventPhoto,
       EventVenue,
       EventDate,
     } = eventInformation;
@@ -35,6 +36,7 @@ export class EventsService {
       Event_Location: EventLocation,
       Event_Venue: EventVenue,
       Event_Date: EventDate,
+      Event_Image: EventPhoto,
     });
 
     const savedEvent = await this.eventRepository.save(newEvent);
