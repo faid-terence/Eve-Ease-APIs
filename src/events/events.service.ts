@@ -69,7 +69,9 @@ export class EventsService {
 
   async getAllEvents(): Promise<Event[]> {
     try {
-      const events = await this.eventRepository.find();
+      const events = await this.eventRepository.find({
+        where: { isAvailable: true },
+      });
 
       if (!events) {
         throw new NotFoundException('Events not found');
@@ -84,12 +86,11 @@ export class EventsService {
       throw new InternalServerErrorException(error.message);
     }
   }
-
-  async getSingleEvent(eventId: number) {
+  async getSingleEvent(id: number) {
     try {
-      const event = await this.eventRepository.findOneBy({ id: eventId });
+      const event = await this.eventRepository.findOne({ where: { id } });
       if (!event) {
-        throw new NotFoundException(`Event with id ${eventId} not found`);
+        throw new NotFoundException(`Event  not found`);
       }
 
       return event;
@@ -98,32 +99,70 @@ export class EventsService {
     }
   }
 
-  async updateEventDetails(eventId: number, eventDetails: UpdateEventDTO) {
-    const event = await this.eventRepository.findOneBy({ id: eventId });
-    if (!event) {
-      throw new NotFoundException(`Event with id ${eventId} not found`);
-    }
-    if (eventDetails.EventName) {
-      event.Event_Name = eventDetails.EventName;
-    }
-    if (eventDetails.EventDescription) {
-      event.Event_Description = eventDetails.EventDescription;
-    }
-    if (eventDetails.EventLocation) {
-      event.Event_Location = eventDetails.EventDescription;
-    }
-    if (eventDetails.EventVenue) {
-      event.Event_Venue = eventDetails.EventVenue;
-    }
-    if (eventDetails.EventPhoto) {
-      event.Event_Image = eventDetails.EventPhoto;
-    }
+  async updateEventDetails(id: number, eventDetails: UpdateEventDTO) {
+    try {
+      const event = await this.eventRepository.findOne({ where: { id } });
+      if (!event) {
+        throw new NotFoundException(`Event  not found`);
+      }
+      if (eventDetails.EventName) {
+        event.Event_Name = eventDetails.EventName;
+      }
+      if (eventDetails.EventDescription) {
+        event.Event_Description = eventDetails.EventDescription;
+      }
+      if (eventDetails.EventLocation) {
+        event.Event_Location = eventDetails.EventDescription;
+      }
+      if (eventDetails.EventVenue) {
+        event.Event_Venue = eventDetails.EventVenue;
+      }
+      if (eventDetails.EventPhoto) {
+        event.Event_Image = eventDetails.EventPhoto;
+      }
 
-    const updatedEvent = await this.eventRepository.save(event);
+      const updatedEvent = await this.eventRepository.save(event);
 
-    return {
-      message: 'Event details updated !',
-      Event: updatedEvent,
-    };
+      return {
+        message: 'Event details updated !',
+        Event: updatedEvent,
+      };
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
+  async deleteEventById(id: number): Promise<{ message: string }> {
+    try {
+      const event = await this.eventRepository.findOne({ where: { id } });
+      if (!event) {
+        throw new NotFoundException(`Event  not found`);
+      }
+      await this.eventRepository.delete(event);
+
+      return {
+        message: 'Event deleted successful',
+      };
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
+  async archieveEvent(id: number) {
+    try {
+      const event = await this.eventRepository.findOne({ where: { id } });
+      if (!event) {
+        throw new NotFoundException(`Event  not found`);
+      }
+
+      event.isAvailable = false;
+
+      await this.eventRepository.save(event);
+      return {
+        message: 'Event sent to Archive',
+      };
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 }
