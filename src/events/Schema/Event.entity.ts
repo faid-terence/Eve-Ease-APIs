@@ -26,4 +26,7 @@ export default class Event {
 
   @Column({ default: false })
   isFree: boolean;
+
+  @Column({ default: true })
+  isAvailable: boolean;
 }
