@@ -10,6 +10,9 @@ export default class Event {
   Event_Name: string;
 
   @Column()
+  Event_Image: string;
+
+  @Column()
   Event_Description: string;
 
   @Column()

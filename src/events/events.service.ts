@@ -1,4 +1,10 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import Event from './Schema/Event.entity';
 import { Repository } from 'typeorm';
@@ -12,33 +18,82 @@ export class EventsService {
   ) {}
 
   async createEvent(eventInformation: CreateEventDTO): Promise<Event> {
-    const {
-      EventName,
-      EventDescription,
-      EventLocation,
-      EventVenue,
-      EventDate,
-    } = eventInformation;
-    const event = await this.eventRepository.findOne({
-      where: { Event_Name: EventName },
-    });
+    try {
+      const {
+        EventName,
+        EventDescription,
+        EventLocation,
+        EventPhoto,
+        EventVenue,
+        EventDate,
+      } = eventInformation;
 
-    if (event) {
-      throw new ConflictException(
-        `Event with name ${EventName} already exists`,
-      );
+      if (
+        !EventName ||
+        !EventDescription ||
+        !EventPhoto ||
+        !EventLocation ||
+        !EventVenue
+      ) {
+        throw new BadRequestException(
+          'Invalid Event data: Required fields are missing.',
+        );
+      }
+      const event = await this.eventRepository.findOne({
+        where: { Event_Name: EventName },
+      });
+
+      if (event) {
+        throw new ConflictException(
+          `Event with name ${EventName} already exists`,
+        );
+      }
+
+      const newEvent = await this.eventRepository.create({
+        Event_Name: EventName,
+        Event_Description: EventDescription,
+        Event_Location: EventLocation,
+        Event_Venue: EventVenue,
+        Event_Date: EventDate,
+        Event_Image: EventPhoto,
+      });
+
+      const savedEvent = await this.eventRepository.save(newEvent);
+
+      return savedEvent;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
     }
+  }
 
-    const newEvent = await this.eventRepository.create({
-      Event_Name: EventName,
-      Event_Description: EventDescription,
-      Event_Location: EventLocation,
-      Event_Venue: EventVenue,
-      Event_Date: EventDate,
-    });
+  async getAllEvents(): Promise<Event[]> {
+    try {
+      const events = await this.eventRepository.find();
 
-    const savedEvent = await this.eventRepository.save(newEvent);
+      if (!events) {
+        throw new NotFoundException('Events not found');
+      }
 
-    return savedEvent;
+      if (events.length === 0) {
+        throw new NotFoundException('No events');
+      }
+
+      return events;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
+  async getSingleEvent(eventId: number) {
+    try {
+      const event = await this.eventRepository.findOneBy({ id: eventId });
+      if (!event) {
+        throw new NotFoundException(`Event with id ${eventId} not found`);
+      }
+
+      return event;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
   }
 }
