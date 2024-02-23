@@ -83,4 +83,17 @@ export class EventsService {
       throw new InternalServerErrorException(error.message);
     }
   }
+
+  async getSingleEvent(eventId: number) {
+    try {
+      const event = await this.eventRepository.findOneBy({ id: eventId });
+      if (!event) {
+        throw new NotFoundException(`Event with id ${eventId} not found`);
+      }
+
+      return event;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
 }
