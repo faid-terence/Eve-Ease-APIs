@@ -86,14 +86,11 @@ export class EventsService {
       throw new InternalServerErrorException(error.message);
     }
   }
-
-  async getSingleEvent(eventId: number) {
+  async getSingleEvent(id: number) {
     try {
-      const event = await this.eventRepository.findOne({
-        where: { id: eventId },
-      });
+      const event = await this.eventRepository.findOne({ where: { id } });
       if (!event) {
-        throw new NotFoundException(`Event with id ${eventId} not found`);
+        throw new NotFoundException(`Event  not found`);
       }
 
       return event;
@@ -102,11 +99,11 @@ export class EventsService {
     }
   }
 
-  async updateEventDetails(eventId: number, eventDetails: UpdateEventDTO) {
+  async updateEventDetails(id: number, eventDetails: UpdateEventDTO) {
     try {
-      const event = await this.eventRepository.findOneBy({ id: eventId });
+      const event = await this.eventRepository.findOne({ where: { id } });
       if (!event) {
-        throw new NotFoundException(`Event with id ${eventId} not found`);
+        throw new NotFoundException(`Event  not found`);
       }
       if (eventDetails.EventName) {
         event.Event_Name = eventDetails.EventName;
@@ -135,13 +132,12 @@ export class EventsService {
     }
   }
 
-  async deleteEventById(eventId: number): Promise<{ message: string }> {
+  async deleteEventById(id: number): Promise<{ message: string }> {
     try {
-      const event = await this.eventRepository.findOneBy({ id: eventId });
+      const event = await this.eventRepository.findOne({ where: { id } });
       if (!event) {
-        throw new NotFoundException(`Event with id ${eventId} not found`);
+        throw new NotFoundException(`Event  not found`);
       }
-
       await this.eventRepository.delete(event);
 
       return {
@@ -152,11 +148,11 @@ export class EventsService {
     }
   }
 
-  async archieveEvent(eventId: number) {
+  async archieveEvent(id: number) {
     try {
-      const event = await this.eventRepository.findOneBy({ id: eventId });
+      const event = await this.eventRepository.findOne({ where: { id } });
       if (!event) {
-        throw new NotFoundException(`Event with id ${eventId} not found`);
+        throw new NotFoundException(`Event  not found`);
       }
 
       event.isAvailable = false;

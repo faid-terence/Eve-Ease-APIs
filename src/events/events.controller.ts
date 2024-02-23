@@ -26,25 +26,25 @@ export class EventsController {
   }
 
   @Get('/:id')
-  async fetchEvent(@Param('eventId') eventId: number) {
-    return this.eventServices.getSingleEvent(eventId);
+  async fetchEvent(@Param('id') id: number) {
+    return this.eventServices.getSingleEvent(id);
   }
 
   @Patch('/:id')
   async updateEvent(
-    @Param('eventId') eventId: number,
+    @Param('id') id: number,
     @Body() eventInfo: UpdateEventDTO,
   ) {
-    return this.eventServices.updateEventDetails(eventId, eventInfo);
+    return this.eventServices.updateEventDetails(id, eventInfo);
   }
 
   @Delete('/:id')
-  async deleteEvent(@Param('eventId') eventId: number) {
-    return this.eventServices.deleteEventById(eventId);
+  async deleteEvent(@Param('id') id: number) {
+    return this.eventServices.deleteEventById(id);
   }
 
   @Post('/:id/archive')
-  async archiveEvent(@Param('eventId') eventId: number) {
-    return this.eventServices.archieveEvent(eventId);
+  async archiveEvent(@Param('id') id: number) {
+    return this.eventServices.archieveEvent(id);
   }
 }
