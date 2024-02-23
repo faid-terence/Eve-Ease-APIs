@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import CreateEventDTO from './DTO/create-event.dto';
 import { EventsService } from './events.service';
+import UpdateEventDTO from './DTO/update-event.dto';
 
 @Controller('events')
 export class EventsController {
@@ -19,5 +20,13 @@ export class EventsController {
   @Get('/:id')
   async fetchEvent(@Param('eventId') eventId: number) {
     return this.eventServices.getSingleEvent(eventId);
+  }
+
+  @Patch('/:id')
+  async updateEvent(
+    @Param('eventId') eventId: number,
+    @Body() eventInfo: UpdateEventDTO,
+  ) {
+    return this.eventServices.updateEventDetails(eventId, eventInfo);
   }
 }
