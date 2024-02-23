@@ -165,4 +165,20 @@ export class EventsService {
       throw new InternalServerErrorException(error.message);
     }
   }
+
+  async viewArchive():Promise<Event[]> {
+    try {
+      const hiddenEvents = await this.eventRepository.find({
+        where: { isAvailable: false },
+      });
+
+      if (hiddenEvents.length === 0) {
+        throw new NotFoundException('No Events in Archive');
+      }
+
+      return hiddenEvents;
+    } catch (error) {
+      throw new NotFoundException('Error retrieving archived events');
+    }
+  }
 }
