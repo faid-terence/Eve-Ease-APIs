@@ -9,6 +9,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import Event from './Schema/Event.entity';
 import { Repository } from 'typeorm';
 import CreateEventDTO from './DTO/create-event.dto';
+import UpdateEventDTO from './DTO/update-event.dto';
 
 @Injectable()
 export class EventsService {
@@ -95,5 +96,34 @@ export class EventsService {
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }
+  }
+
+  async updateEventDetails(eventId: number, eventDetails: UpdateEventDTO) {
+    const event = await this.eventRepository.findOneBy({ id: eventId });
+    if (!event) {
+      throw new NotFoundException(`Event with id ${eventId} not found`);
+    }
+    if (eventDetails.EventName) {
+      event.Event_Name = eventDetails.EventName;
+    }
+    if (eventDetails.EventDescription) {
+      event.Event_Description = eventDetails.EventDescription;
+    }
+    if (eventDetails.EventLocation) {
+      event.Event_Location = eventDetails.EventDescription;
+    }
+    if (eventDetails.EventVenue) {
+      event.Event_Venue = eventDetails.EventVenue;
+    }
+    if (eventDetails.EventPhoto) {
+      event.Event_Image = eventDetails.EventPhoto;
+    }
+
+    const updatedEvent = await this.eventRepository.save(event);
+
+    return {
+      message: 'Event details updated !',
+      Event: updatedEvent,
+    };
   }
 }
