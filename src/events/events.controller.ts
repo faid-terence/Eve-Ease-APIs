@@ -10,7 +10,9 @@ import {
 import CreateEventDTO from './DTO/create-event.dto';
 import { EventsService } from './events.service';
 import UpdateEventDTO from './DTO/update-event.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Event Management')
 @Controller('events')
 export class EventsController {
   constructor(private eventServices: EventsService) {}
