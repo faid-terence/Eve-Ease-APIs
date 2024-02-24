@@ -35,4 +35,26 @@ export class TicketsService {
 
     return newTicket;
   }
+
+  async getAllTickets(eventId: number) {
+    const event = await this.eventRepository.findOne({
+      where: { id: eventId },
+      relations: ['tickets'],
+    });
+
+    if (!event) {
+      throw new Error('Event not found');
+    }
+
+    return event.tickets;
+  }
+
+  async fetchTickets() {
+    try {
+      const tickets = await this.ticketRepository.find();
+      return tickets;
+    } catch (error) {
+      throw new Error(error);
+    }
+  }
 }
