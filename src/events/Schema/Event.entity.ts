@@ -1,4 +1,11 @@
-import { Entity, PrimaryGeneratedColumn, Column, Unique } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  Unique,
+  OneToMany,
+} from 'typeorm';
+import Ticket from '../../tickets/Schema/ticket.entity';
 
 @Entity()
 @Unique(['Event_Name'])
@@ -29,4 +36,7 @@ export default class Event {
 
   @Column({ default: true })
   isAvailable: boolean;
+
+  @OneToMany(() => Ticket, (ticket) => ticket.event)
+  tickets: Ticket[];
 }

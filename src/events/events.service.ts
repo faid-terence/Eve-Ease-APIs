@@ -181,4 +181,5 @@ export class EventsService {
       throw new NotFoundException('Error retrieving archived events');
     }
   }
+  
 }
