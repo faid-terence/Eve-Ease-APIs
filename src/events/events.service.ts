@@ -201,4 +201,22 @@ export class EventsService {
       throw new InternalServerErrorException(error.message);
     }
   }
+
+  async restoreEvent(id: number) {
+    try {
+      const event = await this.eventRepository.findOne({ where: { id } });
+      if (!event) {
+        throw new NotFoundException(`Event  not found`);
+      }
+
+      event.isAvailable = true;
+
+      await this.eventRepository.save(event);
+      return {
+        message: 'Event restored from Archive',
+      };
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
 }

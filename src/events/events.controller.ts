@@ -58,4 +58,9 @@ export class EventsController {
   async fetchTickets(@Param('eventId') eventId: number) {
     return this.eventServices.getEventTickets(eventId);
   }
+
+  @Post('/:id/unarchive')
+  async unarchiveEvent(@Param('id') id: number) {
+    return this.eventServices.restoreEvent(id);
+  }
 }
