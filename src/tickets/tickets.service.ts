@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import Ticket from './Schema/ticket.entity';
@@ -36,18 +36,18 @@ export class TicketsService {
     return newTicket;
   }
 
-  async getAllTickets(eventId: number) {
-    const event = await this.eventRepository.findOne({
-      where: { id: eventId },
-      relations: ['tickets'],
-    });
+  // async getAllTickets(eventId: number) {
+  //   const event = await this.eventRepository.findOne({
+  //     where: { id: eventId },
+  //     relations: ['tickets'],
+  //   });
 
-    if (!event) {
-      throw new Error('Event not found');
-    }
+  //   if (!event) {
+  //     throw new Error('Event not found');
+  //   }
 
-    return event.tickets;
-  }
+  //   return event.tickets;
+  // }
 
   async fetchTickets() {
     try {
@@ -55,6 +55,20 @@ export class TicketsService {
       return tickets;
     } catch (error) {
       throw new Error(error);
+    }
+  }
+
+  async getTicketById(ticketId: number) {
+    try {
+      const ticket = await this.ticketRepository.findOne({
+        where: { id: ticketId },
+      });
+      if (!ticket) {
+        throw new NotFoundException('Ticket not found');
+      }
+      return ticket;
+    } catch (error) {
+      throw new BadRequestException(error.message)
     }
   }
 }
