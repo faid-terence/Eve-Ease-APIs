@@ -23,5 +23,6 @@ import { MailService } from 'src/mail/mail.service';
   ],
   providers: [AuthService, ConfigService, MailService],
   controllers: [AuthController],
+  exports: [AuthService],
 })
 export class AuthModule {}

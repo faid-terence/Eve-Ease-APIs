@@ -4,8 +4,10 @@ import {
   Column,
   Unique,
   OneToMany,
+  ManyToOne,
 } from 'typeorm';
 import Ticket from '../../tickets/Schema/ticket.entity';
+import User from 'src/user/Schema/User.entity';
 
 @Entity()
 @Unique(['Event_Name'])
@@ -37,6 +39,8 @@ export default class Event {
   @Column({ default: true })
   isAvailable: boolean;
 
+  @ManyToOne(() => User, (user) => user.organizedEvents)
+  organizer: User;
   @OneToMany(() => Ticket, (ticket) => ticket.event)
   tickets: Ticket[];
 }
