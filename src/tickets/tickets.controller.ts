@@ -8,7 +8,7 @@ import { ApiTags } from '@nestjs/swagger';
 export class TicketsController {
   constructor(private readonly ticketsService: TicketsService) {}
 
-  @Get("")
+  @Get('')
   async fetchTickets() {
     return this.ticketsService.fetchTickets();
   }
@@ -20,8 +20,13 @@ export class TicketsController {
   ) {
     return this.ticketsService.createTicket(eventId, ticketData);
   }
-  @Get('/:eventId')
-  async getAllTickets(@Param('eventId') eventId: number) {
-    return this.ticketsService.getAllTickets(eventId);
+  // @Get('/:eventId')
+  // async getAllTickets(@Param('eventId') eventId: number) {
+  //   return this.ticketsService.getAllTickets(eventId);
+  // }
+
+  @Get('/:ticketId')
+  async getTicket(@Param('ticketId') ticketId: number) {
+    return this.ticketsService.getTicketById(ticketId);
   }
 }
