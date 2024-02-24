@@ -10,12 +10,15 @@ import Event from './Schema/Event.entity';
 import { Repository } from 'typeorm';
 import CreateEventDTO from './DTO/create-event.dto';
 import UpdateEventDTO from './DTO/update-event.dto';
+import Ticket from 'src/tickets/Schema/ticket.entity';
 
 @Injectable()
 export class EventsService {
   constructor(
     @InjectRepository(Event)
     private readonly eventRepository: Repository<Event>,
+    @InjectRepository(Ticket)
+    private readonly ticketRepository: Repository<Ticket>,
   ) {}
 
   async createEvent(eventInformation: CreateEventDTO): Promise<Event> {
@@ -166,7 +169,7 @@ export class EventsService {
     }
   }
 
-  async viewArchive():Promise<Event[]> {
+  async viewArchive(): Promise<Event[]> {
     try {
       const hiddenEvents = await this.eventRepository.find({
         where: { isAvailable: false },
@@ -181,5 +184,21 @@ export class EventsService {
       throw new NotFoundException('Error retrieving archived events');
     }
   }
-  
+
+  async getEventTickets(eventId: number) {
+    try {
+      const event = await this.eventRepository.findOne({
+        where: { id: eventId },
+      });
+      if (!event) {
+        throw new NotFoundException('Event not found');
+      }
+      const eventTickets = await this.ticketRepository.find({
+        where: { event },
+      });
+      return { event, eventTickets };
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
 }
