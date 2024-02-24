@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { TicketsService } from './tickets.service';
 import Ticket from './Schema/ticket.entity';
 import { ApiTags } from '@nestjs/swagger';
@@ -28,5 +28,13 @@ export class TicketsController {
   @Get('/:ticketId')
   async getTicket(@Param('ticketId') ticketId: number) {
     return this.ticketsService.getTicketById(ticketId);
+  }
+
+  @Patch('/:ticketId')
+  async updateTicket(
+    @Param('ticketId') ticketId: number,
+    @Body() ticketData: Partial<Ticket>,
+  ) {
+    return this.ticketsService.updateTicketInformation(ticketId, ticketData);
   }
 }

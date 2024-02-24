@@ -1,4 +1,8 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import Ticket from './Schema/ticket.entity';
@@ -68,7 +72,34 @@ export class TicketsService {
       }
       return ticket;
     } catch (error) {
-      throw new BadRequestException(error.message)
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  async updateTicketInformation(ticketId: number, ticketData: Partial<Ticket>) {
+    try {
+      const ticket = await this.ticketRepository.findOne({
+        where: { id: ticketId },
+      });
+      if (!ticket) {
+        throw new NotFoundException('Ticket not found');
+      }
+      if (ticketData.category) {
+        ticket.category = ticketData.category;
+      }
+      if (ticketData.price) {
+        ticket.price = ticketData.price;
+      }
+      if (ticketData.availableQuantity) {
+        ticket.availableQuantity = ticketData.availableQuantity;
+      }
+      const updatedTicket = await this.ticketRepository.save(ticket);
+      return {
+        message: 'Ticket updated successfully',
+        updatedTicket,
+      };
+    } catch (error) {
+      throw new BadRequestException(error.message);
     }
   }
 }
