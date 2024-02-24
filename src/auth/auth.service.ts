@@ -22,6 +22,7 @@ import { use } from 'passport';
 
 @Injectable()
 export class AuthService {
+  [x: string]: any;
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     private jwtServices: JwtService,
@@ -139,4 +140,10 @@ export class AuthService {
       message: 'Email Verification Successful',
     };
   }
+
+  validateToken(token: string) {
+    return this.jwtServices.verify(token, {
+        secret : process.env.JWT_SECRET_KEY
+    });
+}
 }

@@ -4,9 +4,10 @@ import { EventsController } from './events.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import Event from './Schema/Event.entity';
 import Ticket from 'src/tickets/Schema/ticket.entity';
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Event, Ticket])],
+  imports: [TypeOrmModule.forFeature([Event, Ticket]), AuthModule],
   providers: [EventsService],
   controllers: [EventsController],
 })
