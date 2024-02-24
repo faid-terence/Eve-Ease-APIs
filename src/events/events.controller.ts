@@ -53,4 +53,9 @@ export class EventsController {
   async archiveEvent(@Param('id') id: number) {
     return this.eventServices.archieveEvent(id);
   }
+
+  @Get('/:eventId/tickets')
+  async fetchTickets(@Param('eventId') eventId: number) {
+    return this.eventServices.getEventTickets(eventId);
+  }
 }
