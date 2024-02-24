@@ -102,4 +102,22 @@ export class TicketsService {
       throw new BadRequestException(error.message);
     }
   }
+
+
+  async deleteTicket(ticketId: number) {
+    try {
+      const ticket = await this.ticketRepository.findOne({
+        where: { id: ticketId },
+      });
+      if (!ticket) {
+        throw new NotFoundException('Ticket not found');
+      }
+      await this.ticketRepository.delete(ticket);
+      return {
+        message: 'Ticket deleted successfully',
+      };
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
 }

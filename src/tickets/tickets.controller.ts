@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { TicketsService } from './tickets.service';
 import Ticket from './Schema/ticket.entity';
 import { ApiTags } from '@nestjs/swagger';
@@ -36,5 +44,10 @@ export class TicketsController {
     @Body() ticketData: Partial<Ticket>,
   ) {
     return this.ticketsService.updateTicketInformation(ticketId, ticketData);
+  }
+
+  @Delete('/:ticketId')
+  async deleteTicket(@Param('ticketId') ticketId: number) {
+    return this.ticketsService.deleteTicket(ticketId);
   }
 }
