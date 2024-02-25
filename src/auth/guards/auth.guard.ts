@@ -27,7 +27,6 @@ export class AuthGuard implements CanActivate {
       request.user = userData;
       return true;
     } catch (error) {
-      console.log('auth error - ', error.message);
       throw new ForbiddenException(
         error.message || 'Session expired! Please sign in',
       );

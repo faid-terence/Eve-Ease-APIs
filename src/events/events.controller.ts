@@ -24,7 +24,10 @@ export class EventsController {
 
   @Post('/')
   @UseGuards(AuthGuard)
-  async createEvent(@Body() eventInfo: CreateEventDTO, @Req() req: Request & { user: { id: number } }) {
+  async createEvent(
+    @Body() eventInfo: CreateEventDTO,
+    @Req() req: Request & { user: { id: number } },
+  ) {
     const userId = req.user.id;
     return this.eventServices.createEvent(userId, eventInfo);
   }
@@ -39,6 +42,12 @@ export class EventsController {
     return this.eventServices.viewArchive();
   }
 
+  @Get('/organizer')
+  @UseGuards(AuthGuard)
+  async fetchOrganizerEvents(@Req() req: Request & { user: { id: number } }) {
+    const userId = req.user.id;
+    return this.eventServices.getOrganizerEvents(userId);
+  }
   @Get('/:id')
   async fetchEvent(@Param('id') id: number) {
     return this.eventServices.getSingleEvent(id);
