@@ -11,6 +11,7 @@ import { Repository } from 'typeorm';
 import CreateEventDTO from './DTO/create-event.dto';
 import UpdateEventDTO from './DTO/update-event.dto';
 import Ticket from 'src/tickets/Schema/ticket.entity';
+import User from 'src/user/Schema/User.entity';
 
 @Injectable()
 export class EventsService {
@@ -19,6 +20,8 @@ export class EventsService {
     private readonly eventRepository: Repository<Event>,
     @InjectRepository(Ticket)
     private readonly ticketRepository: Repository<Ticket>,
+    @InjectRepository(User)
+    private readonly organizerRepository: Repository<User>,
   ) {}
 
   async createEvent(
@@ -55,6 +58,10 @@ export class EventsService {
           `Event with name ${EventName} already exists`,
         );
       }
+      const organizer = await this.organizerRepository.findOne({
+        where: { id: userId },
+        select: ['password', 'verificationToken, isVerified', 'profilePhoto']
+      });
 
       const newEvent = await this.eventRepository.create({
         Event_Name: EventName,
@@ -63,7 +70,7 @@ export class EventsService {
         Event_Venue: EventVenue,
         Event_Date: EventDate,
         Event_Image: EventPhoto,
-        organizer: { id: userId },
+        organizer: organizer,
       });
 
       const savedEvent = await this.eventRepository.save(newEvent);
