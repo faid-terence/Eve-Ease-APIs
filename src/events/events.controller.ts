@@ -33,7 +33,6 @@ export class EventsController {
   }
 
   @Get('/')
-  @UseGuards(AuthGuard)
   async fetchEvents() {
     return this.eventServices.getAllEvents();
   }
@@ -54,21 +53,34 @@ export class EventsController {
   }
 
   @Patch('/:id')
+  @UseGuards(AuthGuard)
   async updateEvent(
     @Param('id') id: number,
     @Body() eventInfo: UpdateEventDTO,
+    @Req() req: Request & { user: { id: number } },
   ) {
-    return this.eventServices.updateEventDetails(id, eventInfo);
+    const userId = req.user.id;
+    return this.eventServices.updateEventDetails(userId, id, eventInfo);
   }
 
   @Delete('/:id')
-  async deleteEvent(@Param('id') id: number) {
-    return this.eventServices.deleteEventById(id);
+  @UseGuards(AuthGuard)
+  async deleteEvent(
+    @Param('id') id: number,
+    @Req() req: Request & { user: { id: number } },
+  ) {
+    const userId = req.user.id;
+    return this.eventServices.deleteEventById(userId, id);
   }
 
   @Post('/:id/archive')
-  async archiveEvent(@Param('id') id: number) {
-    return this.eventServices.archieveEvent(id);
+  @UseGuards(AuthGuard)
+  async archiveEvent(
+    @Param('id') id: number,
+    @Req() req: Request & { user: { id: number } },
+  ) {
+    const userId = req.user.id;
+    return this.eventServices.archieveEvent(userId, id);
   }
 
   @Get('/:eventId/tickets')
