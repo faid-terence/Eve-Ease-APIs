@@ -106,9 +106,15 @@ export class EventsService {
     }
   }
 
-  async updateEventDetails(id: number, eventDetails: UpdateEventDTO) {
+  async updateEventDetails(
+    organizerId,
+    id: number,
+    eventDetails: UpdateEventDTO,
+  ) {
     try {
-      const event = await this.eventRepository.findOne({ where: { id } });
+      const event = await this.eventRepository.findOne({
+        where: { id, organizer: { id: organizerId } },
+      });
       if (!event) {
         throw new NotFoundException(`Event  not found`);
       }
@@ -139,9 +145,14 @@ export class EventsService {
     }
   }
 
-  async deleteEventById(id: number): Promise<{ message: string }> {
+  async deleteEventById(
+    organizerId: number,
+    id: number,
+  ): Promise<{ message: string }> {
     try {
-      const event = await this.eventRepository.findOne({ where: { id } });
+      const event = await this.eventRepository.findOne({
+        where: { id, organizer: { id: organizerId } },
+      });
       if (!event) {
         throw new NotFoundException(`Event  not found`);
       }
@@ -155,9 +166,11 @@ export class EventsService {
     }
   }
 
-  async archieveEvent(id: number) {
+  async archieveEvent(organizerId: number, id: number) {
     try {
-      const event = await this.eventRepository.findOne({ where: { id } });
+      const event = await this.eventRepository.findOne({
+        where: { id, organizer: { id: organizerId } },
+      });
       if (!event) {
         throw new NotFoundException(`Event  not found`);
       }
