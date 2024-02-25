@@ -223,4 +223,20 @@ export class EventsService {
       throw new InternalServerErrorException(error.message);
     }
   }
+
+  async getOrganizerEvents(userId: number) {
+    try {
+      const events = await this.eventRepository.find({
+        where: { organizer: { id: userId } },
+      });
+
+      if (!events) {
+        throw new NotFoundException('No events found');
+      }
+
+      return events;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
 }
