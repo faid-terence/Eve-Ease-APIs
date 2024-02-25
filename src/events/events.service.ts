@@ -21,7 +21,10 @@ export class EventsService {
     private readonly ticketRepository: Repository<Ticket>,
   ) {}
 
-  async createEvent(eventInformation: CreateEventDTO): Promise<Event> {
+  async createEvent(
+    userId: number,
+    eventInformation: CreateEventDTO,
+  ): Promise<Event> {
     try {
       const {
         EventName,
@@ -60,6 +63,7 @@ export class EventsService {
         Event_Venue: EventVenue,
         Event_Date: EventDate,
         Event_Image: EventPhoto,
+        organizer: { id: userId },
       });
 
       const savedEvent = await this.eventRepository.save(newEvent);

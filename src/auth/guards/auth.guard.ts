@@ -19,13 +19,17 @@ export class AuthGuard implements CanActivate {
         throw new UnauthorizedException('Please provide token');
       }
       const authToken = authorization.replace(/bearer/gim, '').trim();
-      const resp = await this.authService.validateToken(authToken);
-      request.decodedData = resp;
+      const userData = await this.authService.validateToken(authToken);
+      if (!userData || !userData.id) {
+        throw new ForbiddenException('Invalid token or user data');
+      }
+      // Attach user information to req.user
+      request.user = userData;
       return true;
     } catch (error) {
       console.log('auth error - ', error.message);
       throw new ForbiddenException(
-        error.message || 'session expired! Please sign In',
+        error.message || 'Session expired! Please sign in',
       );
     }
   }
