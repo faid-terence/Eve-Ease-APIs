@@ -29,7 +29,9 @@ export class AuthService {
     private mailerServices: MailService,
   ) {}
 
-  async registerUser(registerDto: RegisterUserDTO): Promise<User> {
+  async registerUser(
+    registerDto: RegisterUserDTO,
+  ): Promise<{ message: string }> {
     const { email, phoneNumber, password } = registerDto;
 
     if ((!email && !phoneNumber) || !password) {
@@ -72,7 +74,10 @@ export class AuthService {
 
       const savedUser = await this.userRepository.save(newUser);
 
-      return savedUser;
+      return {
+        message:
+          'Thank you for registering with us. An email containing a verification link has been sent to your registered email address. Please check your inbox to complete the registration process.',
+      };
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }
@@ -143,7 +148,7 @@ export class AuthService {
 
   validateToken(token: string) {
     return this.jwtServices.verify(token, {
-        secret : process.env.JWT_SECRET_KEY
+      secret: process.env.JWT_SECRET_KEY,
     });
-}
+  }
 }
