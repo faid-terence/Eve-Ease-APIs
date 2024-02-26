@@ -1,4 +1,12 @@
-import { Body, Controller, Param, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Param,
+  Post,
+  Req,
+  UseGuards,
+  Get,
+} from '@nestjs/common';
 import { OrderService } from './order.service';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 
@@ -14,5 +22,11 @@ export class OrderController {
     @Body('quantity') quantity: number,
   ) {
     return this.orderService.createOrder(ticketId, req.user.id, quantity);
+  }
+
+  @Get('/')
+  @UseGuards(AuthGuard)
+  async viewOrders(@Req() req: Request & { user: { id: number } }) {
+    return this.orderService.viewOrders(req.user.id);
   }
 }
