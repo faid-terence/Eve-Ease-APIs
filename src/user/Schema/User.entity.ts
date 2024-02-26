@@ -30,4 +30,10 @@ export default class User {
 
   @Column({ default: false })
   isVerified: boolean;
+
+  @Column({ nullable: true })
+  resetToken: string;
+
+  @Column({ nullable: true })
+  resetTokenExpires: Date;
 }
