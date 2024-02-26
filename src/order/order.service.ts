@@ -79,4 +79,15 @@ export class OrderService {
       return new BadRequestException(error.message);
     }
   }
+
+  async getOrderById(orderId: number) {
+    try {
+      return this.orderRepository.findOne({
+        where: { id: orderId },
+        relations: ['tickets', 'user'],
+      });
+    } catch (error) {
+      return new BadRequestException(error.message);
+    }
+  }
 }
