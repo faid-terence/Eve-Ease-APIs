@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import Order from './schema/order.entity';
 import { Repository } from 'typeorm';
@@ -30,5 +30,16 @@ export class OrderService {
       orderDate: new Date(),
     });
     return this.orderRepository.save(order);
+  }
+
+  async viewOrders(userId: number) {
+    try {
+      return this.orderRepository.find({
+        where: { user: { id: userId } },
+        relations: ['tickets'],
+      });
+    } catch (error) {
+      return new BadRequestException(error.message);
+    }
   }
 }
