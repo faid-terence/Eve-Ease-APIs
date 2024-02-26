@@ -29,4 +29,19 @@ export class OrderController {
   async viewOrders(@Req() req: Request & { user: { id: number } }) {
     return this.orderService.viewOrders(req.user.id);
   }
+
+  @Get('/all')
+  async viewAllOrders() {
+    return this.orderService.viewAllOrders();
+  }
+
+  @Post('/:orderId/status')
+  @UseGuards(AuthGuard) // to be changed to admin guard
+  async updateOrderStatus(
+    @Param('orderId') orderId: number,
+    @Req() req: Request & { user: { id: number } },
+    @Body('status') status: string,
+  ) {
+    return this.orderService.updateOrderStatus(orderId, status);
+  }
 }
