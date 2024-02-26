@@ -6,6 +6,7 @@ import {
   Req,
   UseGuards,
   Get,
+  Delete,
 } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
@@ -43,5 +44,14 @@ export class OrderController {
     @Body('status') status: string,
   ) {
     return this.orderService.updateOrderStatus(orderId, status);
+  }
+
+  @Delete('/:orderId')
+  @UseGuards(AuthGuard) // to be changed to admin guard
+  async deleteOrder(
+    @Param('orderId') orderId: number,
+    @Req() req: Request & { user: { id: number } },
+  ) {
+    return this.orderService.deleteOrder(orderId);
   }
 }

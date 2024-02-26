@@ -51,15 +51,30 @@ export class OrderService {
     }
   }
 
-
   async updateOrderStatus(orderId: number, status: string) {
     try {
-      const order = await this.orderRepository.findOne({ where: { id: orderId } });
+      const order = await this.orderRepository.findOne({
+        where: { id: orderId },
+      });
       if (!order) {
         return new BadRequestException('Order not found');
       }
       order.status = status;
       return this.orderRepository.save(order);
+    } catch (error) {
+      return new BadRequestException(error.message);
+    }
+  }
+
+  async deleteOrder(orderId: number) {
+    try {
+      const order = await this.orderRepository.findOne({
+        where: { id: orderId },
+      });
+      if (!order) {
+        return new BadRequestException('Order not found');
+      }
+      return this.orderRepository.delete({ id: orderId });
     } catch (error) {
       return new BadRequestException(error.message);
     }
