@@ -19,6 +19,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { randomBytes } from 'crypto';
 import { MailService } from 'src/mail/mail.service';
 import { use } from 'passport';
+import { MoreThan } from 'typeorm';
 
 @Injectable()
 export class AuthService {
@@ -171,6 +172,47 @@ export class AuthService {
 
       return {
         message: 'Password reset link has been sent to your email',
+      };
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
+  async resetPassword(
+    resetToken: string,
+    newPassword: string,
+  ): Promise<{ message: string }> {
+    try {
+      const user = await this.userRepository.findOne({
+        where: {
+          resetToken,
+          resetTokenExpires: MoreThan(new Date(Date.now())),
+        },
+      });
+
+      if (!user) {
+        throw new NotFoundException('Invalid or expired reset token');
+      }
+
+      // Ensure newPassword is not empty
+      if (!newPassword) {
+        throw new BadRequestException('New password cannot be empty');
+      }
+
+      // Hash the new password
+      const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+      // Update user's password, resetToken, and resetTokenExpires
+      user.password = hashedPassword;
+      user.resetToken = null;
+      user.resetTokenExpires = null;
+
+      // Save the updated user
+      await this.userRepository.save(user);
+
+      // Return a success message
+      return {
+        message: 'Password reset successful',
       };
     } catch (error) {
       throw new InternalServerErrorException(error.message);

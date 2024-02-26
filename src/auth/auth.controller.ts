@@ -28,4 +28,12 @@ export class AuthController {
   async resetPassword(@Body('email') email: string) {
     return this.authServices.sendPasswordResetEmail(email);
   }
+
+  @Post('reset-password/:token')
+  async resetPasswordWithToken(
+    @Param('token') token: string,
+    @Body('newPassword') newPassword: string,
+  ) {
+    return this.authServices.resetPassword(token, newPassword);
+  }
 }
