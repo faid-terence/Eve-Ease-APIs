@@ -151,4 +151,27 @@ export class AuthService {
       secret: process.env.JWT_SECRET_KEY,
     });
   }
+
+
+  async sendPasswordResetEmail(email: string): Promise<{ message: string }> {
+    const user = await this.userRepository.findOne({ email });
+    if (!user) {
+      throw new NotFoundException('User with email does not exist');
+    }
+
+    const resetToken = await this.generateVerificationToken(20);
+    user.resetToken = resetToken;
+    user.resetTokenExpires = new Date(Date.now() + 3600000);
+    await this.userRepository.save(user);
+
+    await this.mailerServices.sendPasswordResetEmail(
+      user.fullNames,
+      resetToken,
+      user.email,
+    );
+
+    return {
+      message: 'Password reset link has been sent to your email',
+    };
+  }
 }

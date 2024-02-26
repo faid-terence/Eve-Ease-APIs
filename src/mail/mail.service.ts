@@ -39,4 +39,38 @@ export class MailService {
       console.error('Error sending email:', error);
     }
   }
+
+  async sendPasswordResetEmail(
+    user: string,
+    resetToken: string,
+    email: string,
+  ) {
+    try {
+      const appName = this.configService.get<string>('APP_NAME');
+      const resetLink = `http://localhost:3000/auth/reset-password/${resetToken}`;
+
+      await this.mailerService.sendMail({
+        to: email,
+        from: `"${appName} Support Team" <support@example.com>`,
+        subject: `${appName} Password Reset`,
+        text: `Hi ${user},\n\nYou recently requested to reset your password for ${appName}. Please click the link below to reset it:\n\n${resetLink}\n\nIf you didn't request this, please ignore this email.\n\nBest regards,\n${appName} Team`,
+        html: `
+                    <body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4;">
+                        <div style="background-color: #fff; max-width: 600px; margin: 20px auto; padding: 20px; border-radius: 5px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);">
+                            <h2 style="color: #333;">Password Reset</h2>
+                            <p style="font-size: 16px; color: #555;">Hi ${user},</p>
+                            <p style="font-size: 16px; color: #555;">You recently requested to reset your password for ${appName}. Please click the link below to reset it:</p>
+                            <a href="${resetLink}" style="background-color: #f9f9f9; display: inline-block; padding: 10px; border-radius: 5px; text-align: center; font-size: 24px; font-weight: bold; color: #2678d0; text-decoration: none;">
+                            Reset Password
+                            </a>
+                            <p style="font-size: 16px; color: #555;">If you didn't request this, please ignore this email.</p>
+                            <p style="font-size: 16px; color: #555;">Best regards,<br>${appName} Team</p>
+                        </div>
+                    </body>
+                `,
+      });
+    } catch (error) {
+      console.error('Error sending email:', error);
+    }
+  }
 }
