@@ -10,7 +10,7 @@ import Ticket from '../../tickets/Schema/ticket.entity';
 import User from 'src/user/Schema/User.entity';
 
 @Entity()
-@Unique(['Event_Name'])
+// @Unique(['Event_Name'])
 export default class Event {
   @PrimaryGeneratedColumn()
   id: number;

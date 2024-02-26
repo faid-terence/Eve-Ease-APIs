@@ -259,4 +259,36 @@ export class EventsService {
       throw new InternalServerErrorException(error.message);
     }
   }
+
+  async cloneEvent(eventId: number, userId: number) {
+    try {
+      const event = await this.eventRepository.findOne({
+        where: { id: eventId },
+      });
+
+      if (!event) {
+        throw new NotFoundException('Event not found');
+      }
+
+      const organizer = await this.organizerRepository.findOne({
+        where: { id: userId },
+      });
+
+      const newEvent = await this.eventRepository.create({
+        Event_Name: event.Event_Name,
+        Event_Description: event.Event_Description,
+        Event_Location: event.Event_Location,
+        Event_Venue: event.Event_Venue,
+        Event_Date: event.Event_Date,
+        Event_Image: event.Event_Image,
+        organizer: organizer,
+      });
+
+      const savedEvent = await this.eventRepository.save(newEvent);
+
+      return savedEvent;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
 }
