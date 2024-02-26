@@ -60,7 +60,7 @@ export class EventsService {
       }
       const organizer = await this.organizerRepository.findOne({
         where: { id: userId },
-        select: ['password', 'verificationToken, isVerified', 'profilePhoto']
+        // select: ['password', 'verificationToken, isVerified', 'profilePhoto']
       });
 
       const newEvent = await this.eventRepository.create({
