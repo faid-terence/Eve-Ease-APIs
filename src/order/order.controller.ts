@@ -54,4 +54,13 @@ export class OrderController {
   ) {
     return this.orderService.deleteOrder(orderId);
   }
+
+  @Get('/:orderId')
+  @UseGuards(AuthGuard)
+  async viewOrder(
+    @Param('orderId') orderId: number,
+    @Req() req: Request & { user: { id: number } },
+  ) {
+    return this.orderService.getOrderById(orderId);
+  }
 }
