@@ -92,4 +92,14 @@ export class EventsController {
   async unarchiveEvent(@Param('id') id: number) {
     return this.eventServices.restoreEvent(id);
   }
+
+  @Post('/:eventId/clone')
+  @UseGuards(AuthGuard)
+  async cloneEvent(
+    @Param('eventId') eventId: number,
+    @Req() req: Request & { user: { id: number } },
+  ) {
+    const userId = req.user.id;
+    return this.eventServices.cloneEvent(eventId, userId);
+  }
 }
