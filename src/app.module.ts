@@ -10,6 +10,7 @@ import { TicketsModule } from './tickets/tickets.module';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { OrderModule } from './order/order.module';
+import { PaymentModule } from './payment/payment.module';
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { OrderModule } from './order/order.module';
       inject: [ConfigService],
     }),
     OrderModule,
+    PaymentModule,
   ],
   controllers: [AppController],
   providers: [AppService],
