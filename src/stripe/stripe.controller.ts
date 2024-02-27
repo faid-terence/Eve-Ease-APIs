@@ -14,4 +14,13 @@ export class StripeController {
       return new BadRequestException(error.message);
     }
   }
+
+    @Post('/success')
+    async getSuccessfulPayment(@Body('sessionId') sessionId: string) {
+      try {
+        return await this.stripeService.getSuccesfulPayment(sessionId);
+      } catch (error) {
+        return new BadRequestException(error.message);
+      }
+    }
 }
