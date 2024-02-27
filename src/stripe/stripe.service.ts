@@ -13,10 +13,34 @@ export class StripeService {
   }
 
   async createPaymentIntent(order: Order) {
-    return await this.stripe.paymentIntents.create({
-      amount: order.totalPrice * 100,
-      currency: 'usd',
-      metadata: { integration_check: 'accept_a_payment' },
+    // return await this.stripe.paymentIntents.create({
+    //   amount: order.totalPrice * 100,
+    //   currency: 'usd',
+    //   metadata: { integration_check: 'accept_a_payment' },
+    // });
+
+    const session = await this.stripe.checkout.sessions.create({
+      payment_method_types: ['card'],
+      line_items: [
+        {
+          price_data: {
+            currency: 'usd',
+            product_data: {
+              name: order.tickets[0].category,
+            },
+            unit_amount: order.tickets[0].price * 100,
+          },
+          quantity: order.quantity,
+        },
+      ],
+      mode: 'payment',
+      success_url:
+        'http://localhost:3000/payment/success?session_id={CHECKOUT_SESSION_ID}',
+      cancel_url: 'http://localhost:3000/payment/cancel',
     });
+
+    return {
+      paymentUrl: session.url,
+    };
   }
 }
