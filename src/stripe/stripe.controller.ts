@@ -1,26 +1,31 @@
-import { BadRequestException, Body, Controller, Post } from '@nestjs/common';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Param,
+  Post,
+} from '@nestjs/common';
 import { StripeService } from './stripe.service';
-import Order from 'src/order/schema/order.entity';
 
 @Controller('stripe')
 export class StripeController {
   constructor(private stripeService: StripeService) {}
 
-  @Post('/pay')
-  async createPaymentIntent(@Body() order: Order) {
+  @Post('/:orderId/pay')
+  async createPaymentIntent(@Param('orderId') orderId: number) {
     try {
-      return await this.stripeService.createPaymentIntent(order);
+      return await this.stripeService.createPaymentIntent(orderId);
     } catch (error) {
       return new BadRequestException(error.message);
     }
   }
 
-    @Post('/success')
-    async getSuccessfulPayment(@Body('sessionId') sessionId: string) {
-      try {
-        return await this.stripeService.getSuccesfulPayment(sessionId);
-      } catch (error) {
-        return new BadRequestException(error.message);
-      }
+  @Post('/success')
+  async getSuccessfulPayment(@Body('sessionId') sessionId: string) {
+    try {
+      return await this.stripeService.getSuccesfulPayment(sessionId);
+    } catch (error) {
+      return new BadRequestException(error.message);
     }
+  }
 }

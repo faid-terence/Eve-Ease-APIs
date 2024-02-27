@@ -1,18 +1,26 @@
 import { Injectable } from '@nestjs/common';
 import Stripe from 'stripe';
 import Order from 'src/order/schema/order.entity';
+import { InjectRepository } from '@nestjs/typeorm';
+import { Repository } from 'typeorm';
 
 @Injectable()
 export class StripeService {
   private stripe: Stripe;
 
-  constructor() {
+  constructor(
+    @InjectRepository(Order) private orderRepository: Repository<Order>,
+  ) {
     this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
       apiVersion: '2023-10-16',
     });
   }
 
-  async createPaymentIntent(order: Order) {
+  async createPaymentIntent(orderId: number) {
+    const order = await this.orderRepository.findOne({
+      where: { id: orderId },
+      relations: ['tickets'],
+    });
     // return await this.stripe.paymentIntents.create({
     //   amount: order.totalPrice * 100,
     //   currency: 'usd',
@@ -34,8 +42,7 @@ export class StripeService {
         },
       ],
       mode: 'payment',
-      success_url:
-        'http://localhost:3000/payment/success',
+      success_url: 'http://localhost:3000/payment/success',
       cancel_url: 'http://localhost:3000/payment/cancel',
     });
 
