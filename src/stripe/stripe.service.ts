@@ -35,12 +35,16 @@ export class StripeService {
       ],
       mode: 'payment',
       success_url:
-        'http://localhost:3000/payment/success?session_id={CHECKOUT_SESSION_ID}',
+        'http://localhost:3000/payment/success',
       cancel_url: 'http://localhost:3000/payment/cancel',
     });
 
     return {
       paymentUrl: session.url,
     };
+  }
+
+  async getSuccesfulPayment(sessionId: string) {
+    return await this.stripe.checkout.sessions.retrieve(sessionId);
   }
 }
