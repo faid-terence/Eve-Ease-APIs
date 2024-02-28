@@ -90,4 +90,19 @@ export class OrderService {
       return new BadRequestException(error.message);
     }
   }
+
+  async updateOrderStatusByAdmin(orderId: number, status: string) {
+    try {
+      const order = await this.orderRepository.findOne({
+        where: { id: orderId },
+      });
+      if (!order) {
+        return new BadRequestException('Order not found');
+      }
+      order.status = status;
+      return this.orderRepository.save(order);
+    } catch (error) {
+      return new BadRequestException(error.message);
+    }
+  }
 }

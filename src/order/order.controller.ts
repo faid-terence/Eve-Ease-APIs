@@ -7,6 +7,7 @@ import {
   UseGuards,
   Get,
   Delete,
+  Put,
 } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
@@ -76,5 +77,15 @@ export class OrderController {
     @Req() req: Request & { user: { id: number } },
   ) {
     return this.stripeServices.createPaymentIntent(orderId);
+  }
+
+  @Put('/:orderId/pay/success')
+  @UseGuards(AuthGuard)
+  async updateOrderStatusByAdmin(
+    @Param('orderId') orderId: number,
+    @Req() req: Request & { user: { id: number } },
+    @Body() status: string,
+  ) {
+    return this.orderService.updateOrderStatus(orderId, status);
   }
 }
