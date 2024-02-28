@@ -11,10 +11,14 @@ import {
 import { OrderService } from './order.service';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { ApiTags } from '@nestjs/swagger';
+import { StripeService } from 'src/stripe/stripe.service';
 @ApiTags('Order Management')
 @Controller('order')
 export class OrderController {
-  constructor(private orderService: OrderService) {}
+  constructor(
+    private orderService: OrderService,
+    private stripeServices: StripeService,
+  ) {}
 
   @Post('/:ticketId')
   @UseGuards(AuthGuard)
@@ -63,5 +67,14 @@ export class OrderController {
     @Req() req: Request & { user: { id: number } },
   ) {
     return this.orderService.getOrderById(orderId);
+  }
+
+  @Post('/:orderId/pay')
+  @UseGuards(AuthGuard)
+  async createPaymentIntent(
+    @Param('orderId') orderId: number,
+    @Req() req: Request & { user: { id: number } },
+  ) {
+    return this.stripeServices.createPaymentIntent(orderId);
   }
 }

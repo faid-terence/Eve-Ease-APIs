@@ -6,7 +6,9 @@ import {
   Post,
 } from '@nestjs/common';
 import { StripeService } from './stripe.service';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Stripe Payment')
 @Controller('stripe')
 export class StripeController {
   constructor(private stripeService: StripeService) {}
@@ -20,12 +22,4 @@ export class StripeController {
     }
   }
 
-  @Post('/success')
-  async getSuccessfulPayment(@Body('sessionId') sessionId: string) {
-    try {
-      return await this.stripeService.getSuccesfulPayment(sessionId);
-    } catch (error) {
-      return new BadRequestException(error.message);
-    }
-  }
 }
