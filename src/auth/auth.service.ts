@@ -86,7 +86,7 @@ export class AuthService {
 
   async loginUser(
     loginDto: LoginUserDto,
-  ): Promise<{ message: string; token?: string; data?: LoginResponseDto }> {
+  ): Promise<{ message: string; token?: string }> {
     const { email, phoneNumber, password } = loginDto;
     if ((!phoneNumber && !email) || !password) {
       throw new NotAcceptableException('Invalid Inputs');
@@ -118,10 +118,6 @@ export class AuthService {
     return {
       message: 'Login successful!',
       token: userToken,
-      data: {
-        fullNames: existUser.fullNames,
-        profilePhoto: existUser.profilePhoto,
-      },
     };
   }
 
