@@ -21,11 +21,6 @@ export class StripeService {
       where: { id: orderId },
       relations: ['tickets'],
     });
-    // return await this.stripe.paymentIntents.create({
-    //   amount: order.totalPrice * 100,
-    //   currency: 'usd',
-    //   metadata: { integration_check: 'accept_a_payment' },
-    // });
 
     const session = await this.stripe.checkout.sessions.create({
       payment_method_types: ['card'],
@@ -42,7 +37,7 @@ export class StripeService {
         },
       ],
       mode: 'payment',
-      success_url: 'http://localhost:3000/payment/success',
+      success_url: 'http://localhost:3000/payment/success?orderId=' + orderId,
       cancel_url: 'http://localhost:3000/payment/cancel',
     });
 
