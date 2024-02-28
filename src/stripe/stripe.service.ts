@@ -37,10 +37,9 @@ export class StripeService {
         },
       ],
       mode: 'payment',
-      success_url: 'http://localhost:3000/payment/success?orderId=' + orderId,
+      success_url: `http://localhost:3000/payment/success/:${orderId}`,
       cancel_url: 'http://localhost:3000/payment/cancel',
     });
-
     return {
       paymentUrl: session.url,
     };
