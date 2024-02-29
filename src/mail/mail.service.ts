@@ -73,4 +73,24 @@ export class MailService {
       console.error('Error sending email:', error);
     }
   }
+
+  // send email to subscribers when a new post is created
+  async sendNewPostEmail(subscribers: string[], event: string) {
+    try {
+      const appName = this.configService.get<string>('APP_NAME');
+      const eventLink = `http://localhost:3000/posts/${event}`;
+
+      await this.mailerService.sendMail({
+        to: subscribers,
+        from: `"${appName} Support Team" <support@yourdomain.com>`,
+        subject: 'New Post Notification',
+        html: `<p>Hello,</p><p>A new post is available on ${appName}!</p><p>Visit the post <a href="${eventLink}">here</a>.</p><p>Thank you!</p>`,
+      });
+
+      console.log('New post email notification sent successfully.');
+    } catch (error) {
+      console.error('Error sending new post email notification:', error);
+      // Handle error
+    }
+  }
 }
