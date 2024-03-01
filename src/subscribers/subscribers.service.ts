@@ -1,6 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { subscribe } from 'diagnostics_channel';
+import Event from 'src/events/Schema/Event.entity';
+import { MailService } from 'src/mail/mail.service';
 import User from 'src/user/Schema/User.entity';
 import { Repository } from 'typeorm';
 
@@ -8,6 +10,8 @@ import { Repository } from 'typeorm';
 export class SubscribersService {
   constructor(
     @InjectRepository(User) private subscribersRepository: Repository<User>,
+    @InjectRepository(Event) private eventRepository: Repository<Event>,
+    private mailerServices: MailService,
   ) {}
 
   async subscribeUser(email: string): Promise<{ message: string }> {
@@ -48,6 +52,32 @@ export class SubscribersService {
         where: { isSubscribed: true },
       });
       return subscribers;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
+
+  async sendNotificationToSubscribers(
+    eventId: number,
+  ): Promise<{ message: string }> {
+    try {
+      const event = await this.eventRepository.findOne({
+        where: { id: eventId },
+      });
+
+      if (!event) {
+        return { message: 'Event not found' };
+      }
+      const subscribers = await this.subscribersRepository.find({
+        where: { isSubscribed: true },
+      });
+      subscribers.forEach(async (subscriber) => {
+        await this.mailerServices.sendNewPostEmail(
+          subscriber.email,
+          event.Event_Name,
+        );
+      });
+      return { message: 'Notification sent successfully' };
     } catch (error) {
       throw new BadRequestException(error.message);
     }

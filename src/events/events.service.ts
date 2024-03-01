@@ -12,6 +12,9 @@ import CreateEventDTO from './DTO/create-event.dto';
 import UpdateEventDTO from './DTO/update-event.dto';
 import Ticket from 'src/tickets/Schema/ticket.entity';
 import User from 'src/user/Schema/User.entity';
+import { MailService } from 'src/mail/mail.service';
+import { subscribe } from 'diagnostics_channel';
+import { SubscribersService } from 'src/subscribers/subscribers.service';
 
 @Injectable()
 export class EventsService {
@@ -22,6 +25,8 @@ export class EventsService {
     private readonly ticketRepository: Repository<Ticket>,
     @InjectRepository(User)
     private readonly organizerRepository: Repository<User>,
+    private readonly mailerService: MailService,
+    private readonly subscribersServices: SubscribersService,
   ) {}
 
   async createEvent(
@@ -74,6 +79,10 @@ export class EventsService {
       });
 
       const savedEvent = await this.eventRepository.save(newEvent);
+
+      await this.subscribersServices.sendNotificationToSubscribers(
+        savedEvent.id,
+      );
 
       return savedEvent;
     } catch (error) {

@@ -6,10 +6,12 @@ import Event from './Schema/Event.entity';
 import Ticket from 'src/tickets/Schema/ticket.entity';
 import { AuthModule } from 'src/auth/auth.module';
 import User from 'src/user/Schema/User.entity';
+import { MailService } from 'src/mail/mail.service';
+import { SubscribersService } from 'src/subscribers/subscribers.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Event, Ticket, User]), AuthModule],
-  providers: [EventsService],
+  providers: [EventsService, MailService, SubscribersService],
   controllers: [EventsController],
 })
 export class EventsModule {}
