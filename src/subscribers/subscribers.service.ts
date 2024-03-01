@@ -72,10 +72,7 @@ export class SubscribersService {
         where: { isSubscribed: true },
       });
       subscribers.forEach(async (subscriber) => {
-        await this.mailerServices.sendNewPostEmail(
-          subscriber.email,
-          event.Event_Name,
-        );
+        await this.mailerServices.sendNewPostEmail(subscriber.email, event.id);
       });
       return { message: 'Notification sent successfully' };
     } catch (error) {
