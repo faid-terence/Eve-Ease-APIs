@@ -90,7 +90,6 @@ export class MailService {
       console.log('New post email notification sent successfully.');
     } catch (error) {
       console.error('Error sending new post email notification:', error);
-      // Handle error
     }
   }
 }

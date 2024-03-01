@@ -36,4 +36,10 @@ export default class User {
 
   @Column({ nullable: true })
   resetTokenExpires: Date;
+
+  @Column({ default: false })
+  isAdmin: boolean;
+
+  @Column({ default: false })
+  isSubscribed: boolean;
 }
