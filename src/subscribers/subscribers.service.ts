@@ -25,4 +25,20 @@ export class SubscribersService {
       throw new BadRequestException(error.message);
     }
   }
+
+  async unsubscribeUser(email: string): Promise<{ message: string }> {
+    try {
+      const user = await this.subscribersRepository.findOne({
+        where: { email },
+      });
+      if (!user) {
+        return { message: 'User not found' };
+      }
+      user.isSubscribed = false;
+      await this.subscribersRepository.save(user);
+      return { message: 'User unsubscribed successfully' };
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
 }
