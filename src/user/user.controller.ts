@@ -1,8 +1,16 @@
-import { Body, Controller, Delete, Get, Param, Patch } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  UseGuards,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import UpdateUserDTO from './DTO/UpdateUser.dto';
 import { ApiTags } from '@nestjs/swagger';
-
+import { IsAdminGuard } from 'src/auth/guards/isAdmin.guard';
 
 @ApiTags('User Management')
 @Controller('user')
@@ -10,6 +18,7 @@ export class UserController {
   constructor(private userServices: UserService) {}
 
   @Get('/')
+  @UseGuards(IsAdminGuard)
   async getAllUsers() {
     return this.userServices.getAllUsers();
   }
