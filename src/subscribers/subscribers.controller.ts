@@ -9,4 +9,9 @@ export class SubscribersController {
   async subscribeUser(@Body('email') email: string) {
     return this.subscribersService.subscribeUser(email);
   }
+
+  @Post('unsubscribe')
+  async unsubscribeUser(@Body('email') email: string) {
+    return this.subscribersService.unsubscribeUser(email);
+  }
 }
