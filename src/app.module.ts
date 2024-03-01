@@ -12,6 +12,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { OrderModule } from './order/order.module';
 import { PaymentModule } from './payment/payment.module';
 import { StripeModule } from './stripe/stripe.module';
+import { SubscribersModule } from './subscribers/subscribers.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { StripeModule } from './stripe/stripe.module';
     OrderModule,
     PaymentModule,
     StripeModule,
+    SubscribersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
