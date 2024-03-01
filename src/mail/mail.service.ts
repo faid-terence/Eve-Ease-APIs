@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 import { use } from 'passport';
 import { ConfigService } from '@nestjs/config';
+import User from 'src/user/Schema/User.entity';
 @Injectable()
 export class MailService {
   constructor(
@@ -75,13 +76,13 @@ export class MailService {
   }
 
   // send email to subscribers when a new post is created
-  async sendNewPostEmail(subscribers: string[], event: string) {
+  async sendNewPostEmail(email: string, event: string) {
     try {
       const appName = this.configService.get<string>('APP_NAME');
       const eventLink = `http://localhost:3000/posts/${event}`;
 
       await this.mailerService.sendMail({
-        to: subscribers,
+        to: email,
         from: `"${appName} Support Team" <support@yourdomain.com>`,
         subject: 'New Post Notification',
         html: `<p>Hello,</p><p>A new post is available on ${appName}!</p><p>Visit the post <a href="${eventLink}">here</a>.</p><p>Thank you!</p>`,
