@@ -76,16 +76,27 @@ export class MailService {
   }
 
   // send email to subscribers when a new post is created
-  async sendNewPostEmail(email: string, event: string) {
+  async sendNewPostEmail(email: string, eventId: number) {
     try {
       const appName = this.configService.get<string>('APP_NAME');
-      const eventLink = `http://localhost:3000/posts/${event}`;
+      const eventLink = `http://localhost:3000/event/${eventId}`;
 
       await this.mailerService.sendMail({
         to: email,
         from: `"${appName} Support Team" <support@yourdomain.com>`,
         subject: 'New Post Notification',
-        html: `<p>Hello,</p><p>A new post is available on ${appName}!</p><p>Visit the post <a href="${eventLink}">here</a>.</p><p>Thank you!</p>`,
+        html: `<body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4;">
+        <div style="background-color: #fff; max-width: 600px; margin: 20px auto; padding: 20px; border-radius: 5px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);">
+            <h2 style="color: #333;">New Event Notification</h2>
+            <p style="font-size: 16px; color: #555;">Hi ${email},</p>
+            <p style="font-size: 16px; color: #555;">A new event has been created on ${appName}. Click the button below to view the details:</p>
+            <a href="${eventLink}" style="background-color: #2678d0; display: inline-block; padding: 10px; border-radius: 5px; text-align: center; font-size: 24px; font-weight: bold; color: #fff; text-decoration: none;">
+                View Event
+            </a>
+            <p style="font-size: 16px; color: #555;">Stay tuned for more updates!</p>
+            <p style="font-size: 16px; color: #555;">Best regards,<br>${appName} Team</p>
+        </div>
+    </body>`,
       });
 
       console.log('New post email notification sent successfully.');
