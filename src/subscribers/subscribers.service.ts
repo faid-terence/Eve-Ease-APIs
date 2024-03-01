@@ -41,4 +41,15 @@ export class SubscribersService {
       throw new BadRequestException(error.message);
     }
   }
+
+  async getAllSubscribers(): Promise<User[]> {
+    try {
+      const subscribers = await this.subscribersRepository.find({
+        where: { isSubscribed: true },
+      });
+      return subscribers;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
 }
