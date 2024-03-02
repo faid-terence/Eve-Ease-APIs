@@ -1,5 +1,5 @@
 export default class LoginUserDto {
-  email?: string;
+  email: string;
   phoneNumber?: string;
   password: string;
 }
