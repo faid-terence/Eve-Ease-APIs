@@ -91,13 +91,16 @@ export class AuthService {
     if ((!phoneNumber && !email) || !password) {
       throw new NotAcceptableException('Invalid Inputs');
     }
-    let existUser;
+    const existUser = await this.userRepository
+      .createQueryBuilder('user')
+      .where('user.email = :email OR user.phoneNumber = :phoneNumber', {
+        email,
+        phoneNumber,
+      })
+      .getOne();
 
-    if (email) {
-      existUser = await this.userRepository.findOneBy({ email });
-    }
-    if (phoneNumber) {
-      existUser = await this.userRepository.findOneBy({ phoneNumber });
+    if (!existUser) {
+      throw new UnauthorizedException('Invalid Credentials');
     }
 
     const passwordMatch = await bcrypt.compare(password, existUser.password);
@@ -113,6 +116,7 @@ export class AuthService {
       id: existUser.id,
       name: existUser.fullNames,
       photo: existUser.profilePhoto,
+      isAdmin: existUser.isAdmin,
     });
 
     return {
