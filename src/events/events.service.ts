@@ -111,9 +111,14 @@ export class EventsService {
   }
   async getSingleEvent(id: number) {
     try {
-      const event = await this.eventRepository.findOne({ where: { id } });
+      // Fetch the event including its associated tickets
+      const event = await this.eventRepository.findOne({
+        where: { id },
+        relations: ['tickets'], // Assuming 'tickets' is the name of the relationship
+      });
+
       if (!event) {
-        throw new NotFoundException(`Event  not found`);
+        throw new NotFoundException(`Event not found`);
       }
 
       return event;
