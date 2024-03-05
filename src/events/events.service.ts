@@ -171,55 +171,28 @@ export class EventsService {
     id: number,
   ): Promise<{ message: string }> {
     try {
+      // Find the event by id and organizerId
       const event = await this.eventRepository.findOne({
         where: { id, organizer: { id: organizerId } },
       });
+
+      // If event is not found, throw NotFoundException
       if (!event) {
-        throw new NotFoundException(`Event  not found`);
+        throw new NotFoundException(`Event not found`);
       }
+
+      // Delete associated tickets first
+      await this.ticketRepository.delete({ event: { id: event.id } });
+
+      // Then delete the event
       await this.eventRepository.delete(event);
 
       return {
-        message: 'Event deleted successful',
+        message: 'Event and associated tickets deleted successfully',
       };
     } catch (error) {
+      // Handle errors
       throw new InternalServerErrorException(error.message);
-    }
-  }
-
-  async archieveEvent(organizerId: number, id: number) {
-    try {
-      const event = await this.eventRepository.findOne({
-        where: { id, organizer: { id: organizerId } },
-      });
-      if (!event) {
-        throw new NotFoundException(`Event  not found`);
-      }
-
-      event.isAvailable = false;
-
-      await this.eventRepository.save(event);
-      return {
-        message: 'Event sent to Archive',
-      };
-    } catch (error) {
-      throw new InternalServerErrorException(error.message);
-    }
-  }
-
-  async viewArchive(): Promise<Event[]> {
-    try {
-      const hiddenEvents = await this.eventRepository.find({
-        where: { isAvailable: false },
-      });
-
-      if (hiddenEvents.length === 0) {
-        throw new NotFoundException('No Events in Archive');
-      }
-
-      return hiddenEvents;
-    } catch (error) {
-      throw new NotFoundException('Error retrieving archived events');
     }
   }
 
