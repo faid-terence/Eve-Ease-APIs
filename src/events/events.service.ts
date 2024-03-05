@@ -146,7 +146,7 @@ export class EventsService {
         event.Event_Description = eventDetails.EventDescription;
       }
       if (eventDetails.EventLocation) {
-        event.Event_Location = eventDetails.EventDescription;
+        event.Event_Location = eventDetails.EventLocation;
       }
       if (eventDetails.EventVenue) {
         event.Event_Venue = eventDetails.EventVenue;
