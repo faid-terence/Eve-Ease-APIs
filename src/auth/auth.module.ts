@@ -1,3 +1,4 @@
+
 import { Module } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
@@ -16,7 +17,7 @@ import { MailService } from 'src/mail/mail.service';
       useFactory: async (configService: ConfigService) => ({
         global: true,
         secret: configService.get<string>('JWT_SECRET'),
-        signOptions: { expiresIn: '5m' },
+        signOptions: { expiresIn: '1h' },
       }),
       inject: [ConfigService],
     }),
