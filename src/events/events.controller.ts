@@ -36,10 +36,10 @@ export class EventsController {
   async fetchEvents() {
     return this.eventServices.getAllEvents();
   }
-  @Get('/view-archive')
-  async getArchive() {
-    return this.eventServices.viewArchive();
-  }
+  // @Get('/view-archive')
+  // async getArchive() {
+  //   return this.eventServices.viewArchive();
+  // }
 
   @Get('/organizer')
   @UseGuards(AuthGuard)
@@ -73,15 +73,15 @@ export class EventsController {
     return this.eventServices.deleteEventById(userId, id);
   }
 
-  @Post('/:id/archive')
-  @UseGuards(AuthGuard)
-  async archiveEvent(
-    @Param('id') id: number,
-    @Req() req: Request & { user: { id: number } },
-  ) {
-    const userId = req.user.id;
-    return this.eventServices.archieveEvent(userId, id);
-  }
+  // @Post('/:id/archive')
+  // @UseGuards(AuthGuard)
+  // async archiveEvent(
+  //   @Param('id') id: number,
+  //   @Req() req: Request & { user: { id: number } },
+  // ) {
+  //   const userId = req.user.id;
+  //   return this.eventServices.archieveEvent(userId, id);
+  // }
 
   @Get('/:eventId/tickets')
   async fetchTickets(@Param('eventId') eventId: number) {
