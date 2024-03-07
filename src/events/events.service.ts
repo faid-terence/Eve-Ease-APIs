@@ -95,7 +95,7 @@ export class EventsService {
     try {
       const currentDate = new Date();
       const events = await this.eventRepository.find({
-        where: { isAvailable: true, Event_Date: MoreThan(currentDate) }, 
+        where: { isAvailable: true, Event_Date: MoreThan(currentDate) },
       });
 
       if (!events) {
@@ -277,6 +277,25 @@ export class EventsService {
       const savedEvent = await this.eventRepository.save(newEvent);
 
       return savedEvent;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
+  async searchForEvent(searchTerm: string) {
+    try {
+      const events = await this.eventRepository
+        .createQueryBuilder('event')
+        .where('event.Event_Name ILIKE :searchTerm', {
+          searchTerm: `%${searchTerm}%`,
+        })
+        .getMany();
+
+      if (!events) {
+        throw new NotFoundException('No events found');
+      }
+
+      return events;
     } catch (error) {
       throw new InternalServerErrorException(error.message);
     }

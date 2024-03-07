@@ -102,4 +102,9 @@ export class EventsController {
     const userId = req.user.id;
     return this.eventServices.cloneEvent(eventId, userId);
   }
+
+  @Get('/search/:searchTerm')
+  async searchEvent(@Param('searchTerm') searchTerm: string) {
+    return this.eventServices.searchForEvent(searchTerm);
+  }
 }
