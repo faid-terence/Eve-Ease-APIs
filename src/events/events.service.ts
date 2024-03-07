@@ -15,6 +15,7 @@ import User from 'src/user/Schema/User.entity';
 import { MailService } from 'src/mail/mail.service';
 import { subscribe } from 'diagnostics_channel';
 import { SubscribersService } from 'src/subscribers/subscribers.service';
+import { MoreThan } from 'typeorm';
 
 @Injectable()
 export class EventsService {
@@ -92,8 +93,9 @@ export class EventsService {
 
   async getAllEvents(): Promise<Event[]> {
     try {
+      const currentDate = new Date();
       const events = await this.eventRepository.find({
-        where: { isAvailable: true },
+        where: { isAvailable: true, Event_Date: MoreThan(currentDate) }, 
       });
 
       if (!events) {
@@ -109,6 +111,7 @@ export class EventsService {
       throw new InternalServerErrorException(error.message);
     }
   }
+
   async getSingleEvent(id: number) {
     try {
       // Fetch the event including its associated tickets
