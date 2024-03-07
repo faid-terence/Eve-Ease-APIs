@@ -21,6 +21,12 @@ export class OrderService {
       where: { id: ticketId },
     });
     const user = await this.userRepository.findOne({ where: { id: userId } });
+
+    // Ensure enough tickets are available
+    if (ticket.availableQuantity < quantity) {
+      throw new Error('Insufficient quantity of tickets available');
+    }
+
     const totalPrice = ticket.price * quantity;
     const order = this.orderRepository.create({
       tickets: [ticket],
@@ -29,6 +35,12 @@ export class OrderService {
       totalPrice,
       orderDate: new Date(),
     });
+
+    // Update availableQuantity
+    ticket.availableQuantity -= quantity;
+
+    // Save the updated ticket and the order
+    await this.ticketRepository.save(ticket);
     return this.orderRepository.save(order);
   }
 
