@@ -13,7 +13,7 @@ export class MailService {
   async sendUserEmail(user: string, verificationToken: string, email: string) {
     try {
       const appName = this.configService.get<string>('APP_NAME');
-      const verificationLink = `http://localhost:3000/auth/verify/${verificationToken}`;
+      const verificationLink = `http://localhost:5173/auth/email-verified/${verificationToken}`;
 
       await this.mailerService.sendMail({
         to: email,
@@ -48,7 +48,7 @@ export class MailService {
   ) {
     try {
       const appName = this.configService.get<string>('APP_NAME');
-      const resetLink = `http://localhost:3000/auth/reset-password/${resetToken}`;
+      const resetLink = `http://localhost:5173/auth/set-new-password/${resetToken}`;
 
       await this.mailerService.sendMail({
         to: email,
