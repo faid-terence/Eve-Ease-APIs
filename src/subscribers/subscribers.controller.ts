@@ -1,6 +1,8 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { SubscribersService } from './subscribers.service';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Subscribers')
 @Controller('subscribe')
 export class SubscribersController {
   constructor(private subscribersService: SubscribersService) {}
