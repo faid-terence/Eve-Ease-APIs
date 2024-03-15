@@ -13,6 +13,7 @@ import { OrderModule } from './order/order.module';
 import { PaymentModule } from './payment/payment.module';
 import { StripeModule } from './stripe/stripe.module';
 import { SubscribersModule } from './subscribers/subscribers.module';
+import { MessagesModule } from './messages/messages.module';
 
 @Module({
   imports: [
@@ -44,6 +45,7 @@ import { SubscribersModule } from './subscribers/subscribers.module';
     PaymentModule,
     StripeModule,
     SubscribersModule,
+    MessagesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

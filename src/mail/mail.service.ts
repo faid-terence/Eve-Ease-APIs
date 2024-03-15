@@ -2,6 +2,19 @@ import { Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 import { use } from 'passport';
 import { ConfigService } from '@nestjs/config';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as pdfkit from 'pdfkit';
+
+interface TicketData {
+  eventName: string;
+  name: string;
+  seat: string;
+  date: string;
+  time: string;
+  price: string;
+  barcode: string;
+}
 import User from 'src/user/Schema/User.entity';
 @Injectable()
 export class MailService {
@@ -103,5 +116,73 @@ export class MailService {
     } catch (error) {
       console.error('Error sending new post email notification:', error);
     }
+  }
+
+  async sendTicketEmail(email: string, ticketData: TicketData) {
+    try {
+      const appName = this.configService.get<string>('APP_NAME');
+
+      // Generate PDF content
+      const pdfPath = await this.generateTicketPDF(ticketData);
+
+      // Send email with PDF attachment
+      await this.mailerService.sendMail({
+        to: email,
+        from: `"${appName} Support Team" <support@yourdomain.com>`,
+        subject: 'New Ticket Notification',
+        html: `<body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4;">
+                <div style="background-color: #fff; max-width: 600px; margin: 20px auto; padding: 20px; border-radius: 5px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);">
+                    <h2 style="color: #333;">New Event Notification</h2>
+                    <p style="font-size: 16px; color: #555;">Hi ${email},</p>
+                    <p style="font-size: 16px; color: #555;">Your ticket details are below:</p>
+                    <a href="${pdfPath}" style="background-color: #2678d0; display: inline-block; padding: 10px; border-radius: 5px; text-align: center; font-size: 24px; font-weight: bold; color: #fff; text-decoration: none;">
+                        View Ticket
+                    </a>
+                    <p style="font-size: 16px; color: #555;">Stay tuned for more updates!</p>
+                    <p style="font-size: 16px; color: #555;">Best regards,<br>${appName} Team</p>
+                </div>
+            </body>`,
+        attachments: [
+          {
+            filename: `ticket_${ticketData.eventName.replace(/\s+/g, '_').toLowerCase()}.pdf`,
+            path: pdfPath,
+          },
+        ],
+      });
+    } catch (error) {
+      console.error('Error sending ticket email:', error);
+    }
+  }
+
+  async generateTicketPDF(ticketData: TicketData): Promise<string> {
+    return new Promise<string>((resolve, reject) => {
+      try {
+        // Create a new PDF document
+        const doc = new pdfkit();
+        const pdfPath = path.join(
+          __dirname,
+          `ticket_${ticketData.eventName.replace(/\s+/g, '_').toLowerCase()}.pdf`,
+        );
+
+        // Pipe the PDF content to a file
+        doc.pipe(fs.createWriteStream(pdfPath));
+
+        // Add content to the PDF (customize as per your requirements)
+        doc.text(`Event Name: ${ticketData.eventName}`);
+        doc.text(`Ticket Holder Name: ${ticketData.name}`);
+        doc.text(`Seat: ${ticketData.seat}`);
+        doc.text(`Date: ${ticketData.date}`);
+        doc.text(`Time: ${ticketData.time}`);
+        doc.text(`Price: ${ticketData.price}`);
+        // Add more ticket details as needed
+
+        // Finalize the PDF
+        doc.end();
+
+        resolve(pdfPath);
+      } catch (error) {
+        reject(error);
+      }
+    });
   }
 }

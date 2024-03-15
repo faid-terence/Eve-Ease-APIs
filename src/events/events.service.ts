@@ -114,10 +114,9 @@ export class EventsService {
 
   async getSingleEvent(id: number) {
     try {
-      // Fetch the event including its associated tickets
       const event = await this.eventRepository.findOne({
         where: { id },
-        relations: ['tickets'], // Assuming 'tickets' is the name of the relationship
+        relations: ['tickets'],
       });
 
       if (!event) {
@@ -174,27 +173,22 @@ export class EventsService {
     id: number,
   ): Promise<{ message: string }> {
     try {
-      // Find the event by id and organizerId
       const event = await this.eventRepository.findOne({
         where: { id, organizer: { id: organizerId } },
       });
 
-      // If event is not found, throw NotFoundException
       if (!event) {
         throw new NotFoundException(`Event not found`);
       }
 
-      // Delete associated tickets first
       await this.ticketRepository.delete({ event: { id: event.id } });
 
-      // Then delete the event
       await this.eventRepository.delete(event);
 
       return {
         message: 'Event and associated tickets deleted successfully',
       };
     } catch (error) {
-      // Handle errors
       throw new InternalServerErrorException(error.message);
     }
   }
