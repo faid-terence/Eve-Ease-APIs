@@ -31,4 +31,12 @@ export class MessagesService {
       throw new Error(`Error: ${error.message}`);
     }
   }
+
+  async getMessageById(id: number) {
+    try {
+      return await this.messagesRepository.findOne({ where: { id } });
+    } catch (error) {
+      throw new Error(`Error: ${error.message}`);
+    }
+  }
 }
