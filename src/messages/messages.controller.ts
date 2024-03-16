@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Get, Param } from '@nestjs/common';
+import { Controller, Post, Body, Get, Param, Delete } from '@nestjs/common';
 import { MessagesService } from './messages.service';
 import CreateMessageDto from './DTO/create-message.dto';
 
@@ -19,5 +19,10 @@ export class MessagesController {
   @Get(':id')
   async getMessageById(@Param('id') id: number) {
     return this.messageServices.getMessageById(id);
+  }
+
+  @Delete(':id')
+  async deleteMessage(@Param('id') id: number) {
+    return this.messageServices.deleteMessage(id);
   }
 }
