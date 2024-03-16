@@ -48,9 +48,15 @@ export class MessagesService {
 
   async deleteMessage(id: number) {
     try {
-      return await this.messagesRepository.delete({ id });
+      const deleteResult = await this.messagesRepository.delete({ id });
+
+      if (deleteResult.affected === 0) {
+        throw new NotFoundException('Message not found!');
+      }
+
+      return deleteResult;
     } catch (error) {
-      throw new Error(`Error: ${error.message}`);
+      throw new Error(`Failed to delete message: ${error.message}`);
     }
   }
 }
