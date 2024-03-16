@@ -23,4 +23,12 @@ export class MessagesService {
       throw new Error(`Error: ${error.message}`);
     }
   }
+
+  async getAllMessages() {
+    try {
+      return await this.messagesRepository.find();
+    } catch (error) {
+      throw new Error(`Error: ${error.message}`);
+    }
+  }
 }
