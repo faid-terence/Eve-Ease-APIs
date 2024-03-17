@@ -25,7 +25,7 @@ export class PaymentController {
   async paymentSuccessfullMessage(@Param('orderId') orderId: number) {
     try {
       const status = 'completed';
-      await this.orderService.updateOrderStatus(orderId, status);
+      await this.orderService.updateOrderStatus(orderId);
 
       return {
         message: 'Payment Successful. Order status updated to completed.',

@@ -63,7 +63,7 @@ export class OrderService {
     }
   }
 
-  async updateOrderStatus(orderId: number, status: string) {
+  async updateOrderStatus(orderId: number) {
     try {
       const order = await this.orderRepository.findOne({
         where: { id: orderId },
@@ -71,7 +71,7 @@ export class OrderService {
       if (!order) {
         return new BadRequestException('Order not found');
       }
-      order.status = status;
+      order.isPaid = true;
       return this.orderRepository.save(order);
     } catch (error) {
       return new BadRequestException(error.message);
@@ -103,7 +103,7 @@ export class OrderService {
     }
   }
 
-  async updateOrderStatusByAdmin(orderId: number, status: string) {
+  async updateOrderStatusByAdmin(orderId: number) {
     try {
       const order = await this.orderRepository.findOne({
         where: { id: orderId },
@@ -111,7 +111,7 @@ export class OrderService {
       if (!order) {
         return new BadRequestException('Order not found');
       }
-      order.status = status;
+      order.isPaid = true;
       return this.orderRepository.save(order);
     } catch (error) {
       return new BadRequestException(error.message);

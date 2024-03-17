@@ -47,9 +47,8 @@ export class OrderController {
   async updateOrderStatus(
     @Param('orderId') orderId: number,
     @Req() req: Request & { user: { id: number } },
-    @Body('status') status: string,
   ) {
-    return this.orderService.updateOrderStatus(orderId, status);
+    return this.orderService.updateOrderStatus(orderId);
   }
 
   @Delete('/:orderId')
@@ -84,8 +83,19 @@ export class OrderController {
   async updateOrderStatusByAdmin(
     @Param('orderId') orderId: number,
     @Req() req: Request & { user: { id: number } },
-    @Body() status: string,
   ) {
-    return this.orderService.updateOrderStatus(orderId, status);
+    return this.orderService.updateOrderStatus(orderId);
+  }
+
+  @Post(':orderId/send-ticket')
+  async sendTicketToUser(
+    @Param('orderId') orderId: number,
+  ): Promise<{ message: string }> {
+    try {
+      const result = await this.stripeServices.sendTicketToUser(orderId);
+      return { message: result.message };
+    } catch (error) {
+      return { message: error.message };
+    }
   }
 }
