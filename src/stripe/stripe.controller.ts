@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Body,
   Controller,
+  Get,
   Param,
   Post,
 } from '@nestjs/common';
@@ -22,4 +23,13 @@ export class StripeController {
     }
   }
 
+  // fetch all payments from stripe
+  @Get('/payments')
+  async fetchAllPayments() {
+    try {
+      return await this.stripeService.fetchAllPayments();
+    } catch (error) {
+      return new BadRequestException(error.message);
+    }
+  }
 }
