@@ -42,4 +42,8 @@ export class StripeController {
       return new BadRequestException(error.message);
     }
   }
+
+  // automatically send ticket to user after payment
+
+
 }

@@ -30,6 +30,6 @@ export default class Order {
   @Column()
   orderDate: Date;
 
-  @Column({ default: 'pending' })
-  status: string;
+  @Column({ default: false })
+  isPaid: boolean;
 }
