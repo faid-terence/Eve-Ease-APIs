@@ -48,4 +48,10 @@ export class StripeService {
   async getSuccesfulPayment(sessionId: string) {
     return await this.stripe.checkout.sessions.retrieve(sessionId);
   }
+
+  // fetch all payments from stripe
+
+  async fetchAllPayments() {
+    return await this.stripe.paymentIntents.list();
+  }
 }
