@@ -54,4 +54,9 @@ export class StripeService {
   async fetchAllPayments() {
     return await this.stripe.paymentIntents.list();
   }
+
+  // fetch a single payment from stripe
+  async fetchSinglePayment(paymentId: string) {
+    return await this.stripe.paymentIntents.retrieve(paymentId);
+  }
 }
