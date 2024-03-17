@@ -32,4 +32,14 @@ export class StripeController {
       return new BadRequestException(error.message);
     }
   }
+
+  // fetch a single payment from stripe
+  @Get('/payments/:paymentId')
+  async fetchSinglePayment(@Param('paymentId') paymentId: string) {
+    try {
+      return await this.stripeService.fetchSinglePayment(paymentId);
+    } catch (error) {
+      return new BadRequestException(error.message);
+    }
+  }
 }
