@@ -7,15 +7,6 @@ import * as path from 'path';
 import * as pdfkit from 'pdfkit';
 import * as PDFDocument from 'pdfkit';
 
-interface TicketData {
-  eventName: string;
-  name: string;
-  seat: string;
-  date: string;
-  time: string;
-  price: string;
-  barcode: string;
-}
 import User from 'src/user/Schema/User.entity';
 @Injectable()
 export class MailService {
@@ -119,7 +110,7 @@ export class MailService {
     }
   }
 
-  async sendTicketEmail(email: string, ticketData: TicketData) {
+  async sendTicketEmail(email: string, ticketData: any) {
     try {
       const appName = this.configService.get<string>('APP_NAME');
 
@@ -187,7 +178,7 @@ export class MailService {
   //   });
   // }
 
-  async sendTicketToUser(user: User, ticketData: TicketData): Promise<void> {
+  async sendTicketToUser(user: User, ticketData: any): Promise<void> {
     try {
       const appName = this.configService.get<string>('APP_NAME');
       const pdfPath = await this.generateTicketPDF(ticketData);
@@ -236,23 +227,41 @@ export class MailService {
     `;
   }
 
-  private async generateTicketPDF(ticketData: TicketData): Promise<string> {
-    return new Promise<string>((resolve, reject) => {
-      const pdfPath = `./tickets/ticket_${ticketData.eventName.replace(/\s+/g, '_').toLowerCase()}.pdf`;
-      const doc = new PDFDocument();
+  async generateTicketPDF(eventName: string): Promise<string> {
+    const directory = './tickets/';
+    const pdfPath = path.join(
+      directory,
+      `ticket_${eventName.replace(/\s+/g, '_').toLowerCase()}.pdf`,
+    );
 
-      doc.pipe(fs.createWriteStream(pdfPath));
-      doc.fontSize(16).text(`Event: ${ticketData.eventName}`);
-      doc.fontSize(14).text(`Date: ${ticketData.date}`);
-      doc.end();
+    // Create the directory if it doesn't exist
+    if (!fs.existsSync(directory)) {
+      fs.mkdirSync(directory, { recursive: true });
+    }
 
-      doc.on('finish', () => {
-        resolve(pdfPath);
-      });
+    const doc = new PDFDocument();
+    doc.pipe(fs.createWriteStream(pdfPath));
+    doc.fontSize(16).text(`Event: ${eventName}`);
+    // Assuming ticketData is not used here
+    doc.fontSize(14).text('Date:'); // Date can't be extracted from ticketData
+    doc.end();
 
-      doc.on('error', (error) => {
-        reject(error);
-      });
-    });
+    return pdfPath;
+  }
+
+  async sendTicketByEmail(email: string, pdfPath: string) {
+    const mailOptions = {
+      to: email,
+      subject: 'Your Ticket',
+      text: 'Please find your ticket attached.',
+      attachments: [
+        {
+          filename: 'ticket.pdf',
+          path: pdfPath,
+        },
+      ],
+    };
+
+    await this.mailerService.sendMail(mailOptions);
   }
 }
