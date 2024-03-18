@@ -3,6 +3,7 @@ import Stripe from 'stripe';
 import Order from 'src/order/schema/order.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class StripeService {
@@ -10,6 +11,7 @@ export class StripeService {
 
   constructor(
     @InjectRepository(Order) private orderRepository: Repository<Order>,
+    private readonly mailServices: MailService,
   ) {
     this.stripe = new Stripe(process.env.STRIPE_SECRET_KEY, {
       apiVersion: '2023-10-16',
@@ -78,6 +80,15 @@ export class StripeService {
           message: 'Ticket has already been sent to the user.',
         };
       }
+
+      // Send ticket to user
+
+      let ticketData = {
+        ticket: order.tickets[0],
+        quantity: order.quantity,
+        totalPrice: order.totalPrice,
+      };
+      await this.mailServices.sendTicketToUser(order.user, ticketData);
 
       order.isPaid = true;
       await this.orderRepository.save(order);

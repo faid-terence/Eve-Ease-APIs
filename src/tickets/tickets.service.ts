@@ -7,6 +7,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import Ticket from './Schema/ticket.entity';
 import Event from 'src/events/Schema/Event.entity';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class TicketsService {
@@ -16,6 +17,7 @@ export class TicketsService {
 
     @InjectRepository(Event)
     private eventRepository: Repository<Event>,
+    private readonly mailServices: MailService,
   ) {}
 
   async createTicket(eventId: number, ticketData: Partial<Ticket>) {
@@ -103,7 +105,6 @@ export class TicketsService {
     }
   }
 
-
   async deleteTicket(ticketId: number) {
     try {
       const ticket = await this.ticketRepository.findOne({
@@ -119,5 +120,16 @@ export class TicketsService {
     } catch (error) {
       throw new BadRequestException(error.message);
     }
+  }
+
+  // send ticket to user after payment
+
+  async sendTicketToUser(ticketData: any, email: string) {
+    try {
+      await this.mailServices.sendTicketToUser(ticketData, email);
+      return {
+        message: 'Ticket sent to the user successfully.',
+      };
+    } catch (error) {}
   }
 }

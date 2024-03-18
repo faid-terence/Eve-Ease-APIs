@@ -6,19 +6,37 @@ import {
   Param,
   Patch,
   Post,
+  Put,
 } from '@nestjs/common';
 import { TicketsService } from './tickets.service';
 import Ticket from './Schema/ticket.entity';
 import { ApiTags } from '@nestjs/swagger';
+import { MailService } from 'src/mail/mail.service';
 
 @ApiTags('Ticket Management')
 @Controller('tickets')
 export class TicketsController {
-  constructor(private readonly ticketsService: TicketsService) {}
+  constructor(
+    private readonly ticketsService: TicketsService,
+    private readonly mailServices: MailService,
+  ) {}
 
   @Get('')
   async fetchTickets() {
     return this.ticketsService.fetchTickets();
+  }
+  @Put('/send-ticket')
+  async generateAndSendTicketByEmail(
+    @Body('eventName') eventName: string,
+    @Body('email') email: string,
+  ) {
+    try {
+      const pdfPath = await this.mailServices.generateTicketPDF(eventName);
+      await this.mailServices.sendTicketByEmail(email, pdfPath);
+      return { message: 'Ticket sent successfully' };
+    } catch (error) {
+      return { error: 'Error generating or sending ticket' };
+    }
   }
 
   @Post('/:eventId')
