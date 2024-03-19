@@ -5,9 +5,11 @@ import {
   Get,
   Param,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { StripeService } from './stripe.service';
 import { ApiTags } from '@nestjs/swagger';
+import { IsAdminGuard } from 'src/auth/guards/isAdmin.guard';
 
 @ApiTags('Stripe Payment')
 @Controller('stripe')
@@ -25,6 +27,7 @@ export class StripeController {
 
   // fetch all payments from stripe
   @Get('/payments')
+  @UseGuards(IsAdminGuard)
   async fetchAllPayments() {
     try {
       return await this.stripeService.fetchAllPayments();
@@ -44,6 +47,4 @@ export class StripeController {
   }
 
   // automatically send ticket to user after payment
-
-
 }
