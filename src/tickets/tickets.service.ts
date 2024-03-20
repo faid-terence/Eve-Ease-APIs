@@ -138,4 +138,24 @@ export class TicketsService {
       };
     } catch (error) {}
   }
+
+  // fetch organizer tickets with event details
+
+  async fetchOrganizerTickets(userId: number) {
+    try {
+      const organizer = await this.organizerRepository.findOne({
+        where: { id: userId },
+      });
+      if (!organizer) {
+        throw new NotFoundException('Organizer not found');
+      }
+      const tickets = await this.ticketRepository.find({
+        where: { event: { organizer } },
+        relations: ['event'],
+      });
+      return tickets;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
 }

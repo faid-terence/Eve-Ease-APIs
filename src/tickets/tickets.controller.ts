@@ -29,6 +29,13 @@ export class TicketsController {
   async fetchTickets() {
     return this.ticketsService.fetchTickets();
   }
+
+  @Get('/organizer')
+  @UseGuards(AuthGuard)
+  async fetchOrganizerTickets(@Req() req: Request & { user: { id: number } }) {
+    const userId = req.user.id;
+    return this.ticketsService.fetchOrganizerTickets(userId);
+  }
   @Put('/send-ticket')
   async generateAndSendTicketByEmail(
     @Body('eventName') eventName: string,
