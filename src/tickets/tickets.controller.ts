@@ -60,10 +60,6 @@ export class TicketsController {
     const userId = req.user.id;
     return this.ticketsService.createTicket(eventId, ticketData, userId);
   }
-  // @Get('/:eventId')
-  // async getAllTickets(@Param('eventId') eventId: number) {
-  //   return this.ticketsService.getAllTickets(eventId);
-  // }
 
   @Get('/:ticketId')
   async getTicket(@Param('ticketId') ticketId: number) {

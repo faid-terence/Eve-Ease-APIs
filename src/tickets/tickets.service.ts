@@ -35,20 +35,20 @@ export class TicketsService {
     try {
       const event = await this.eventRepository.findOne({
         where: { id: eventId },
+        relations: ['organizer'],
       });
       if (!event) {
         throw new NotFoundException('Event not found');
       }
 
-      const organizer = await this.organizerRepository.findOne({
-        where: { id: userId },
-      });
+      const organizer = event.organizer;
 
-      if (event.organizer !== organizer) {
+      if (!organizer || organizer.id !== userId) {
         throw new ForbiddenException(
           'You are not authorized to create a ticket for this event',
         );
       }
+
       const ticket = this.ticketRepository.create(ticketData);
       ticket.event = event;
       const newTicket = await this.ticketRepository.save(ticket);
