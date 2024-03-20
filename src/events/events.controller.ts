@@ -36,10 +36,6 @@ export class EventsController {
   async fetchEvents() {
     return this.eventServices.getAllEvents();
   }
-  // @Get('/view-archive')
-  // async getArchive() {
-  //   return this.eventServices.viewArchive();
-  // }
 
   @Get('/organizer')
   @UseGuards(AuthGuard)

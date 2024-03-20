@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  ForbiddenException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -8,6 +9,7 @@ import { Repository } from 'typeorm';
 import Ticket from './Schema/ticket.entity';
 import Event from 'src/events/Schema/Event.entity';
 import { MailService } from 'src/mail/mail.service';
+import User from 'src/user/Schema/User.entity';
 
 @Injectable()
 export class TicketsService {
@@ -18,42 +20,46 @@ export class TicketsService {
     @InjectRepository(Event)
     private eventRepository: Repository<Event>,
     private readonly mailServices: MailService,
+
+    @InjectRepository(User)
+    private organizerRepository: Repository<User>,
   ) {}
 
-  async createTicket(eventId: number, ticketData: Partial<Ticket>) {
-    const { category, price, availableQuantity } = ticketData;
-    const event = await this.eventRepository.findOne({
-      where: { id: eventId },
-    });
+  // organizer create tickets for their own events
 
-    if (!event) {
-      throw new Error('Event not found');
+  async createTicket(
+    eventId: number,
+    ticketData: Partial<Ticket>,
+    userId: number,
+  ) {
+    try {
+      const event = await this.eventRepository.findOne({
+        where: { id: eventId },
+      });
+      if (!event) {
+        throw new NotFoundException('Event not found');
+      }
+
+      const organizer = await this.organizerRepository.findOne({
+        where: { id: userId },
+      });
+
+      if (event.organizer !== organizer) {
+        throw new ForbiddenException(
+          'You are not authorized to create a ticket for this event',
+        );
+      }
+      const ticket = this.ticketRepository.create(ticketData);
+      ticket.event = event;
+      const newTicket = await this.ticketRepository.save(ticket);
+      return {
+        message: 'Ticket created successfully',
+        newTicket,
+      };
+    } catch (error) {
+      throw new BadRequestException(error.message);
     }
-
-    const ticket = this.ticketRepository.create({
-      category,
-      price,
-      availableQuantity,
-      event,
-    });
-
-    const newTicket = await this.ticketRepository.save(ticket);
-
-    return newTicket;
   }
-
-  // async getAllTickets(eventId: number) {
-  //   const event = await this.eventRepository.findOne({
-  //     where: { id: eventId },
-  //     relations: ['tickets'],
-  //   });
-
-  //   if (!event) {
-  //     throw new Error('Event not found');
-  //   }
-
-  //   return event.tickets;
-  // }
 
   async fetchTickets() {
     try {
@@ -131,5 +137,25 @@ export class TicketsService {
         message: 'Ticket sent to the user successfully.',
       };
     } catch (error) {}
+  }
+
+  // fetch organizer tickets with event details
+
+  async fetchOrganizerTickets(userId: number) {
+    try {
+      const organizer = await this.organizerRepository.findOne({
+        where: { id: userId },
+      });
+      if (!organizer) {
+        throw new NotFoundException('Organizer not found');
+      }
+      const tickets = await this.ticketRepository.find({
+        where: { event: { organizer } },
+        relations: ['event'],
+      });
+      return tickets;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 }

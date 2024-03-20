@@ -7,11 +7,15 @@ import {
   Patch,
   Post,
   Put,
+  Req,
+  UseGuards,
 } from '@nestjs/common';
 import { TicketsService } from './tickets.service';
 import Ticket from './Schema/ticket.entity';
 import { ApiTags } from '@nestjs/swagger';
 import { MailService } from 'src/mail/mail.service';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { Request } from 'express';
 
 @ApiTags('Ticket Management')
 @Controller('tickets')
@@ -24,6 +28,13 @@ export class TicketsController {
   @Get('')
   async fetchTickets() {
     return this.ticketsService.fetchTickets();
+  }
+
+  @Get('/organizer')
+  @UseGuards(AuthGuard)
+  async fetchOrganizerTickets(@Req() req: Request & { user: { id: number } }) {
+    const userId = req.user.id;
+    return this.ticketsService.fetchOrganizerTickets(userId);
   }
   @Put('/send-ticket')
   async generateAndSendTicketByEmail(
@@ -40,11 +51,14 @@ export class TicketsController {
   }
 
   @Post('/:eventId')
+  @UseGuards(AuthGuard)
   async createTicket(
     @Param('eventId') eventId: number,
     @Body() ticketData: Partial<Ticket>,
+    @Req() req: Request & { user: { id: number } },
   ) {
-    return this.ticketsService.createTicket(eventId, ticketData);
+    const userId = req.user.id;
+    return this.ticketsService.createTicket(eventId, ticketData, userId);
   }
   // @Get('/:eventId')
   // async getAllTickets(@Param('eventId') eventId: number) {
