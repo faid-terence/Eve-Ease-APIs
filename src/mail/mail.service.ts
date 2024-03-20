@@ -240,13 +240,22 @@ export class MailService {
     }
 
     const doc = new PDFDocument();
-    doc.pipe(fs.createWriteStream(pdfPath));
+    const writeStream = fs.createWriteStream(pdfPath);
+    doc.pipe(writeStream);
     doc.fontSize(16).text(`Event: ${eventName}`);
     // Assuming ticketData is not used here
     doc.fontSize(14).text('Date:'); // Date can't be extracted from ticketData
     doc.end();
 
-    return pdfPath;
+    return new Promise<string>((resolve, reject) => {
+      writeStream.on('finish', () => {
+        resolve(pdfPath);
+      });
+
+      writeStream.on('error', (err) => {
+        reject(err);
+      });
+    });
   }
 
   async sendTicketByEmail(email: string, pdfPath: string) {
