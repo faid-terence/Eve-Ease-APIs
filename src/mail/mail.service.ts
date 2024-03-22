@@ -261,7 +261,7 @@ export class MailService {
   async sendTicketByEmail(email: string, pdfPath: string) {
     const mailOptions = {
       to: email,
-      subject: 'Your Ticket',
+      subject: 'Your Ticket is Ready!',
       text: 'Please find your ticket attached.',
       attachments: [
         {
