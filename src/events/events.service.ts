@@ -1,4 +1,4 @@
-  import {
+import {
   BadRequestException,
   ConflictException,
   Injectable,
@@ -96,14 +96,11 @@ export class EventsService {
       const currentDate = new Date();
       const events = await this.eventRepository.find({
         where: { isAvailable: true, Event_Date: MoreThan(currentDate) },
+        order: { Event_Date: 'ASC' }, // Order events by Event_Date in ascending order
       });
 
-      if (!events) {
+      if (!events || events.length === 0) {
         throw new NotFoundException('Events not found');
-      }
-
-      if (events.length === 0) {
-        throw new NotFoundException('No events');
       }
 
       return events;
