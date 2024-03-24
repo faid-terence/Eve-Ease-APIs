@@ -25,7 +25,7 @@ export class IsAdminGuard implements CanActivate {
       }
       // Attach user information to req.user
       request.user = userData;
-      if (userData.role !== 'admin') {
+      if (!userData.isAdmin) {
         throw new ForbiddenException(
           'You are not authorized to perform this action',
         );
