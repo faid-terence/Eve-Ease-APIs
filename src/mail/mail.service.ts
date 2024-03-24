@@ -269,7 +269,7 @@ export class MailService {
           path: pdfPath,
         },
       ],
-    };
+    };  
 
     await this.mailerService.sendMail(mailOptions);
   }
