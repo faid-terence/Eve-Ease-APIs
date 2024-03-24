@@ -27,7 +27,7 @@ export default class Order {
   @Column()
   totalPrice: number;
 
-  @Column()
+  @Column({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
   orderDate: Date;
 
   @Column({ default: false })

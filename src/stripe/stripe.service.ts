@@ -17,11 +17,11 @@ export class StripeService {
       apiVersion: '2023-10-16',
     });
   }
-
   async createPaymentIntent(orderId: number) {
     const order = await this.orderRepository.findOne({
       where: { id: orderId },
       relations: ['tickets'],
+      order: { orderDate: 'DESC' },
     });
 
     const session = await this.stripe.checkout.sessions.create({
@@ -42,6 +42,12 @@ export class StripeService {
       success_url: `http://localhost:3000/payment/success/:${orderId}`,
       cancel_url: 'http://localhost:3000/payment/cancel',
     });
+
+    // Assuming session creation and payment confirmation
+    // Update order's isPaid property to true
+    order.isPaid = true;
+    await this.orderRepository.save(order);
+
     return {
       paymentUrl: session.url,
     };
@@ -80,15 +86,6 @@ export class StripeService {
           message: 'Ticket has already been sent to the user.',
         };
       }
-
-      // Send ticket to user
-
-      let ticketData = {
-        ticket: order.tickets[0],
-        quantity: order.quantity,
-        totalPrice: order.totalPrice,
-      };
-      await this.mailServices.sendTicketToUser(order.user, ticketData);
 
       order.isPaid = true;
       await this.orderRepository.save(order);
