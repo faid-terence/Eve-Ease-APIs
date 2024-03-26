@@ -6,6 +6,9 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as pdfkit from 'pdfkit';
 import * as PDFDocument from 'pdfkit';
+import * as wkhtmltopdf from 'wkhtmltopdf-installer';
+import * as htmlPdf from 'html-pdf';
+import * as puppeteer from 'puppeteer';
 
 import User from 'src/user/Schema/User.entity';
 @Injectable()
@@ -85,23 +88,35 @@ export class MailService {
     try {
       const appName = this.configService.get<string>('APP_NAME');
       const eventLink = `http://localhost:3000/event/${eventId}`;
+      const htmlContent = `<body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4;">
+        <div style="background-color: #fff; max-width: 600px; margin: 20px auto; padding: 20px; border-radius: 5px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);">
+          <h2 style="color: #333;">New Event Notification</h2>
+          <p style="font-size: 16px; color: #555;">Hi ${email},</p>
+          <p style="font-size: 16px; color: #555;">A new event has been created on ${appName}. Click the button below to view the details:</p>
+          <a href="${eventLink}" style="background-color: #2678d0; display: inline-block; padding: 10px; border-radius: 5px; text-align: center; font-size: 24px; font-weight: bold; color: #fff; text-decoration: none;">
+            View Event
+          </a>
+          <p style="font-size: 16px; color: #555;">Stay tuned for more updates!</p>
+          <p style="font-size: 16px; color: #555;">Best regards,<br>${appName} Team</p>
+        </div>
+      </body>`;
+
+      const browser = await puppeteer.launch();
+      const page = await browser.newPage();
+      await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
+      const pdfBuffer = await page.pdf();
+      await browser.close();
 
       await this.mailerService.sendMail({
         to: email,
         from: `"${appName} Support Team" <support@yourdomain.com>`,
         subject: 'New Post Notification',
-        html: `<body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4;">
-        <div style="background-color: #fff; max-width: 600px; margin: 20px auto; padding: 20px; border-radius: 5px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);">
-            <h2 style="color: #333;">New Event Notification</h2>
-            <p style="font-size: 16px; color: #555;">Hi ${email},</p>
-            <p style="font-size: 16px; color: #555;">A new event has been created on ${appName}. Click the button below to view the details:</p>
-            <a href="${eventLink}" style="background-color: #2678d0; display: inline-block; padding: 10px; border-radius: 5px; text-align: center; font-size: 24px; font-weight: bold; color: #fff; text-decoration: none;">
-                View Event
-            </a>
-            <p style="font-size: 16px; color: #555;">Stay tuned for more updates!</p>
-            <p style="font-size: 16px; color: #555;">Best regards,<br>${appName} Team</p>
-        </div>
-    </body>`,
+        attachments: [
+          {
+            filename: 'event_notification.pdf',
+            content: pdfBuffer,
+          },
+        ],
       });
 
       console.log('New post email notification sent successfully.');
@@ -233,8 +248,6 @@ export class MailService {
       directory,
       `ticket_${eventName.replace(/\s+/g, '_').toLowerCase()}.pdf`,
     );
-
-    // Create the directory if it doesn't exist
     if (!fs.existsSync(directory)) {
       fs.mkdirSync(directory, { recursive: true });
     }
@@ -243,8 +256,7 @@ export class MailService {
     const writeStream = fs.createWriteStream(pdfPath);
     doc.pipe(writeStream);
     doc.fontSize(16).text(`Event: ${eventName}`);
-    // Assuming ticketData is not used here
-    doc.fontSize(14).text('Date:'); // Date can't be extracted from ticketData
+    doc.fontSize(14).text('Date:');
     doc.end();
 
     return new Promise<string>((resolve, reject) => {
@@ -269,8 +281,50 @@ export class MailService {
           path: pdfPath,
         },
       ],
-    };  
+    };
 
     await this.mailerService.sendMail(mailOptions);
+  }
+
+  async sendTicketPdf(userEmail: string, ticketHtml: string) {
+    try {
+      const pdfBuffer = await this.generatePdfFromHtml(ticketHtml);
+
+      await this.mailerService.sendMail({
+        to: userEmail,
+        subject: 'Your Event Ticket',
+        text: 'Please find your event ticket attached.',
+        attachments: [
+          {
+            filename: 'ticket.pdf',
+            content: pdfBuffer,
+          },
+        ],
+      });
+
+      console.log(`Ticket PDF sent to ${userEmail}`);
+    } catch (error) {
+      console.error('Error sending ticket PDF:', error);
+    }
+  }
+
+  private generatePdfFromHtml(html: string): Promise<Buffer> {
+    return new Promise<Buffer>((resolve, reject) => {
+      const wkhtmltopdfBinary = wkhtmltopdf('bin/wkhtmltopdf');
+
+      wkhtmltopdf
+        .create(wkhtmltopdfBinary)
+        .fromString(html, {
+          encoding: 'utf-8',
+          lowQuality: true,
+        })
+        .toBuffer((err, buffer) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(buffer);
+          }
+        });
+    });
   }
 }
