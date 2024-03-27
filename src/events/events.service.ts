@@ -109,6 +109,22 @@ export class EventsService {
     }
   }
 
+  async adminGetEventsWithOrganizerDetails(): Promise<Event[]> {
+    try {
+      const events = await this.eventRepository.find({
+        relations: ['organizer'],
+      });
+
+      if (!events || events.length === 0) {
+        throw new NotFoundException('Events not found');
+      }
+
+      return events;
+    } catch (error) {
+      throw new InternalServerErrorException(error.message);
+    }
+  }
+
   async getSingleEvent(id: number) {
     try {
       const event = await this.eventRepository.findOne({
