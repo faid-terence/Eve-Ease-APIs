@@ -15,6 +15,7 @@ import UpdateEventDTO from './DTO/update-event.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { Request } from 'express';
+import { IsAdminGuard } from 'src/auth/guards/isAdmin.guard';
 
 @ApiTags('Event Management')
 @ApiBearerAuth()
@@ -35,6 +36,12 @@ export class EventsController {
   @Get('/')
   async fetchEvents() {
     return this.eventServices.getAllEvents();
+  }
+
+  @Get('/admin-events')
+  @UseGuards(IsAdminGuard)
+  async fetchAdminEvents() {
+    return this.eventServices.adminGetEventsWithOrganizerDetails();
   }
 
   @Get('/organizer')

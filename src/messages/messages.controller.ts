@@ -1,6 +1,15 @@
-import { Controller, Post, Body, Get, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { MessagesService } from './messages.service';
 import CreateMessageDto from './DTO/create-message.dto';
+import { IsAdminGuard } from 'src/auth/guards/isAdmin.guard';
 
 @Controller('messages')
 export class MessagesController {
@@ -11,6 +20,7 @@ export class MessagesController {
     return this.messageServices.userSendMessage(message);
   }
 
+  @UseGuards(IsAdminGuard)
   @Get()
   async getAllMessages() {
     return this.messageServices.getAllMessages();

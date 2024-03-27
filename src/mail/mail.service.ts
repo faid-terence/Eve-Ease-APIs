@@ -512,7 +512,7 @@ export class MailService {
         subject: 'New Post Notification',
         attachments: [
           {
-            filename: 'event_notification.pdf',
+            filename: 'ticknet_ticket.pdf',
             content: pdfBuffer,
           },
         ],
