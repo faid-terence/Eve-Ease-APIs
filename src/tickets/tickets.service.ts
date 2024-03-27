@@ -23,6 +23,7 @@ export class TicketsService {
 
     @InjectRepository(User)
     private organizerRepository: Repository<User>,
+    
   ) {}
 
   // organizer create tickets for their own events
@@ -158,4 +159,6 @@ export class TicketsService {
       throw new BadRequestException(error.message);
     }
   }
+
+
 }

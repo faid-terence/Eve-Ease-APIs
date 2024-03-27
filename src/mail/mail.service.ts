@@ -10,7 +10,6 @@ import * as wkhtmltopdf from 'wkhtmltopdf-installer';
 import * as htmlPdf from 'html-pdf';
 import * as puppeteer from 'puppeteer';
 
-
 import User from 'src/user/Schema/User.entity';
 @Injectable()
 export class MailService {
@@ -405,5 +404,123 @@ export class MailService {
           }
         });
     });
+  }
+
+  async sendTicketPdfAfterPayment(userEmail: string) {
+    const appName = this.configService.get<string>('APP_NAME');
+    try {
+      const htmlContent = `
+      <!DOCTYPE html>
+      <html lang="en">
+        <head>
+          <meta charset="UTF-8" />
+          <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+          <title>Event Tickets</title>
+          <style>
+            @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap");
+            html, body {
+              height: 100%;
+              margin: 0;
+              padding: 0;
+            }
+            body {
+              font-family: "Montserrat", sans-serif;
+              background: linear-gradient(135deg, #47a847, #2e8b2e);
+              display: flex;
+              justify-content: center;
+              align-items: center;
+            }
+            .ticket-container {
+              perspective: 1000px;
+            }
+            .ticket {
+              background: linear-gradient(135deg, #47a847, #2e8b2e);
+              color: #fff;
+              width: 300px;
+              height: 500px;
+              border-radius: 20px;
+              box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              justify-content: space-between;
+              padding: 20px;
+              position: relative;
+              transform-style: preserve-3d;
+              transition: transform 0.5s;
+            }
+            .ticket:hover {
+              transform: rotateY(20deg);
+            }
+            .event-info {
+              text-align: center;
+            }
+            .event-info h2 {
+              font-size: 24px;
+              margin-bottom: 10px;
+            }
+            .qr-code {
+              width: 120px;
+              height: 120px;
+              background-color: #fff;
+              border-radius: 10px;
+              display: flex;
+              justify-content: center;
+              align-items: center;
+            }
+            .qr-code img {
+              max-width: 100%;
+              max-height: 100%;
+            }
+            .ticket-details {
+              text-align: center;
+            }
+          </style>
+        </head>
+        <body>
+          <div class="ticket-container">
+            <div class="ticket">
+              <div class="event-info">
+                <h2>Concert Event</h2>
+                <p>Main Stage</p>
+                <p>June 15, 2024 - 8:00 PM</p>
+              </div>
+              <div class="qr-code">
+              <img src="src/images/qr.png" alt="QR Code" />
+              </div>
+              <div class="ticket-details">
+                <p>Ticket No: 12345678</p>
+                <p>Seat: A12</p>
+              </div>
+            </div>
+          </div>
+        </body>
+      </html>`;
+
+      const browser = await puppeteer.launch();
+      const page = await browser.newPage();
+      await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
+      const pdfBuffer = await page.pdf({
+        printBackground: true,
+      });
+
+      await browser.close();
+
+      await this.mailerService.sendMail({
+        to: userEmail,
+        from: `"${appName} Support Team" <support@yourdomain.com>`,
+        subject: 'New Post Notification',
+        attachments: [
+          {
+            filename: 'event_notification.pdf',
+            content: pdfBuffer,
+          },
+        ],
+      });
+
+      console.log(`Ticket PDF sent to ${userEmail}`);
+    } catch (error) {
+      console.error('Error sending ticket PDF:', error);
+    }
   }
 }
