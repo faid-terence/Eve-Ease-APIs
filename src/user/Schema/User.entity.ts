@@ -19,7 +19,11 @@ export default class User {
   @Column()
   phoneNumber: string;
 
-  @Column()
+  @Column({
+    nullable: true,
+    default:
+      'http://res.cloudinary.com/faid-terence/image/upload/v1711803562/aiswa8jcv6rzztbnnly3.jpg',
+  })
   profilePhoto: string;
 
   @Column()
