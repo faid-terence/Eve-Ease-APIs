@@ -19,11 +19,7 @@ import { MessagesModule } from './messages/messages.module';
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'localhost',
-      port: 5432,
-      username: 'postgres',
-      password: 'thestunna420',
-      database: 'Events',
+      url: process.env.DATABASE_URL,
       entities: ['dist/**/*.entity.js'],
       synchronize: true,
     }),
