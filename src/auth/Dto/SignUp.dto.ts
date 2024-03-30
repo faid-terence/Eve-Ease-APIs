@@ -3,7 +3,7 @@ export default class RegisterUserDTO {
   email: string;
   country: string;
   phoneNumber: string;
-  profilePhoto: string;
+  profilePhoto?: string;
   password: string;
   verificationToken: string;
   isVerified: boolean;
