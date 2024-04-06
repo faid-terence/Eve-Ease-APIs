@@ -84,118 +84,148 @@ export class MailService {
   }
 
   // send email to subscribers when a new post is created
+  // async sendNewPostEmail(email: string, eventId: number) {
+  //   try {
+  //     const appName = this.configService.get<string>('APP_NAME');
+  //     const eventLink = `http://localhost:3000/event/${eventId}`;
+
+  //     const htmlContent = `
+  //       <!DOCTYPE html>
+  //       <html lang="en">
+  //         <head>
+  //           <meta charset="UTF-8" />
+  //           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  //           <title>Event Tickets</title>
+  //           <style>
+  //             @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap");
+  //             html, body {
+  //               height: 100%;
+  //               margin: 0;
+  //               padding: 0;
+  //             }
+  //             body {
+  //               font-family: "Montserrat", sans-serif;
+  //               background: linear-gradient(135deg, #47a847, #2e8b2e);
+  //               display: flex;
+  //               justify-content: center;
+  //               align-items: center;
+  //             }
+  //             .ticket-container {
+  //               perspective: 1000px;
+  //             }
+  //             .ticket {
+  //               background: linear-gradient(135deg, #47a847, #2e8b2e);
+  //               color: #fff;
+  //               width: 300px;
+  //               height: 500px;
+  //               border-radius: 20px;
+  //               box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  //               display: flex;
+  //               flex-direction: column;
+  //               align-items: center;
+  //               justify-content: space-between;
+  //               padding: 20px;
+  //               position: relative;
+  //               transform-style: preserve-3d;
+  //               transition: transform 0.5s;
+  //             }
+  //             .ticket:hover {
+  //               transform: rotateY(20deg);
+  //             }
+  //             .event-info {
+  //               text-align: center;
+  //             }
+  //             .event-info h2 {
+  //               font-size: 24px;
+  //               margin-bottom: 10px;
+  //             }
+  //             .qr-code {
+  //               width: 120px;
+  //               height: 120px;
+  //               background-color: #fff;
+  //               border-radius: 10px;
+  //               display: flex;
+  //               justify-content: center;
+  //               align-items: center;
+  //             }
+  //             .qr-code img {
+  //               max-width: 100%;
+  //               max-height: 100%;
+  //             }
+  //             .ticket-details {
+  //               text-align: center;
+  //             }
+  //           </style>
+  //         </head>
+  //         <body>
+  //           <div class="ticket-container">
+  //             <div class="ticket">
+  //               <div class="event-info">
+  //                 <h2>Concert Event</h2>
+  //                 <p>Main Stage</p>
+  //                 <p>June 15, 2024 - 8:00 PM</p>
+  //               </div>
+  //               <div class="qr-code">
+  //               <img src="src/images/qr.png" alt="QR Code" />
+  //               </div>
+  //               <div class="ticket-details">
+  //                 <p>Ticket No: 12345678</p>
+  //                 <p>Seat: A12</p>
+  //               </div>
+  //             </div>
+  //           </div>
+  //         </body>
+  //       </html>
+  //     `;
+
+  //     const browser = await puppeteer.launch();
+  //     const page = await browser.newPage();
+  //     await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
+  //     const pdfBuffer = await page.pdf({
+  //       printBackground: true,
+  //     });
+  //     await browser.close();
+
+  //     await this.mailerService.sendMail({
+  //       to: email,
+  //       from: `"${appName} Support Team" <support@yourdomain.com>`,
+  //       subject: 'New Post Notification',
+  //       attachments: [
+  //         {
+  //           filename: 'event_notification.pdf',
+  //           content: pdfBuffer,
+  //         },
+  //       ],
+  //     });
+
+  //     console.log('New post email notification sent successfully.');
+  //   } catch (error) {
+  //     console.error('Error sending new post email notification:', error);
+  //   }
+  // }
+
+  // send email to subscribers when a new post is created
   async sendNewPostEmail(email: string, eventId: number) {
     try {
       const appName = this.configService.get<string>('APP_NAME');
       const eventLink = `http://localhost:3000/event/${eventId}`;
 
-      const htmlContent = `
-        <!DOCTYPE html>
-        <html lang="en">
-          <head>
-            <meta charset="UTF-8" />
-            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-            <title>Event Tickets</title>
-            <style>
-              @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap");
-              html, body {
-                height: 100%;
-                margin: 0;
-                padding: 0;
-              }
-              body {
-                font-family: "Montserrat", sans-serif;
-                background: linear-gradient(135deg, #47a847, #2e8b2e);
-                display: flex;
-                justify-content: center;
-                align-items: center;
-              }
-              .ticket-container {
-                perspective: 1000px;
-              }
-              .ticket {
-                background: linear-gradient(135deg, #47a847, #2e8b2e);
-                color: #fff;
-                width: 300px;
-                height: 500px;
-                border-radius: 20px;
-                box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                justify-content: space-between;
-                padding: 20px;
-                position: relative;
-                transform-style: preserve-3d;
-                transition: transform 0.5s;
-              }
-              .ticket:hover {
-                transform: rotateY(20deg);
-              }
-              .event-info {
-                text-align: center;
-              }
-              .event-info h2 {
-                font-size: 24px;
-                margin-bottom: 10px;
-              }
-              .qr-code {
-                width: 120px;
-                height: 120px;
-                background-color: #fff;
-                border-radius: 10px;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-              }
-              .qr-code img {
-                max-width: 100%;
-                max-height: 100%;
-              }
-              .ticket-details {
-                text-align: center;
-              }
-            </style>
-          </head>
-          <body>
-            <div class="ticket-container">
-              <div class="ticket">
-                <div class="event-info">
-                  <h2>Concert Event</h2>
-                  <p>Main Stage</p>
-                  <p>June 15, 2024 - 8:00 PM</p>
-                </div>
-                <div class="qr-code">
-                <img src="src/images/qr.png" alt="QR Code" />
-                </div>
-                <div class="ticket-details">
-                  <p>Ticket No: 12345678</p>
-                  <p>Seat: A12</p>
-                </div>
-              </div>
-            </div>
-          </body>
-        </html>
-      `;
-
-      const browser = await puppeteer.launch();
-      const page = await browser.newPage();
-      await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
-      const pdfBuffer = await page.pdf({
-        printBackground: true,
-      });
-      await browser.close();
-
       await this.mailerService.sendMail({
         to: email,
         from: `"${appName} Support Team" <support@yourdomain.com>`,
         subject: 'New Post Notification',
-        attachments: [
-          {
-            filename: 'event_notification.pdf',
-            content: pdfBuffer,
-          },
-        ],
+        html: `<body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4;">
+        <div style="background-color: #fff; max-width: 600px; margin: 20px auto; padding: 20px; border-radius: 5px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);">
+            <h2 style="color: #333;">New Event Notification</h2>
+            <p style="font-size: 16px; color: #555;">Hi ${email},</p>
+            <p style="font-size: 16px; color: #555;">A new event has been created on ${appName}. Click the button below to view the details:</p>
+            <a href="${eventLink}" style="background-color: #2678d0; display: inline-block; padding: 10px; border-radius: 5px; text-align: center; font-size: 24px; font-weight: bold; color: #fff; text-decoration: none;">
+                View Event
+            </a>
+            <p style="font-size: 16px; color: #555;">Stay tuned for more updates!</p>
+            <p style="font-size: 16px; color: #555;">Best regards,<br>${appName} Team</p>
+        </div>
+    </body>`,
       });
 
       console.log('New post email notification sent successfully.');
@@ -203,6 +233,7 @@ export class MailService {
       console.error('Error sending new post email notification:', error);
     }
   }
+
   async sendTicketEmail(email: string, ticketData: any) {
     try {
       const appName = this.configService.get<string>('APP_NAME');
