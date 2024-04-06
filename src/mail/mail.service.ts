@@ -532,7 +532,7 @@ export class MailService {
         to: userEmail,
         from: `"${appName} Support Team" <support@example.com>`,
         subject: `${appName} Ticket Creation Guide`,
-        text: `Hi ${user},\n\nWelcome to ${appName}! We're glad you're here. If you need assistance or want to report an issue, creating a support ticket is easy. Just follow these steps:\n\n1. Log in to your ${appName} account.\n2. Navigate to the dashboard.\n3. Click on the "Support" or "Help" section.\n4. Choose "Create a New Ticket" option.\n5. Fill in the required details, including a brief description of your issue or request.\n6. Submit the ticket.\n\nOur support team will review your ticket promptly and assist you accordingly.\n\nIf you have any questions or encounter any difficulties, feel free to reach out to us at support@example.com.\n\nBest regards,\n${appName} Team`,
+        text: `Hi ${user},\n\nWelcome to ${appName}! We're glad you're here. If you need assistance or want to report an issue, creating a support ticket is easy. Just follow these steps:\n\n1. Log in to your ${appName} account.\n2. Navigate to the dashboard.\n3. click the ticket icon in the action field.\n4. Choose "Create a New Ticket" option.\n5. Fill in the required details,\n\nIf you have any questions or encounter any difficulties, feel free to reach out to us at faidterence@outlook.com.\n\nBest regards,\n${appName} Team`,
         html: `
             <body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4;">
                 <div style="background-color: #fff; max-width: 600px; margin: 20px auto; padding: 20px; border-radius: 5px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);">
@@ -542,13 +542,12 @@ export class MailService {
                     <ol style="font-size: 16px; color: #555; padding-left: 20px;">
                         <li>Log in to your ${appName} account.</li>
                         <li>Navigate to the dashboard.</li>
-                        <li>Click on the "Support" or "Help" section.</li>
+                        <li>Click the green icon in the event table.</li>
                         <li>Choose "Create a New Ticket" option.</li>
-                        <li>Fill in the required details, including a brief description of your issue or request.</li>
+                        <li>Fill in the required details</li>
                         <li>Submit the ticket.</li>
                     </ol>
-                    <p style="font-size: 16px; color: #555;">Our support team will review your ticket promptly and assist you accordingly.</p>
-                    <p style="font-size: 16px; color: #555;">If you have any questions or encounter any difficulties, feel free to reach out to us at <a href="mailto:support@example.com">support@example.com</a>.</p>
+                    <p style="font-size: 16px; color: #555;">If you have any questions or encounter any difficulties, feel free to reach out to us at <a href="mailto:faidterence@outlook.com">Terence Faid JABO</a>.</p>
                     <p style="font-size: 16px; color: #555;">Best regards,<br>${appName} Team</p>
                 </div>
             </body>
