@@ -86,6 +86,10 @@ export class EventsService {
       await this.subscribersServices.sendNotificationToSubscribers(
         savedEvent.id,
       );
+      await this.mailerService.sendTicketCreationGuide(
+        organizer.email,
+        organizer.fullNames,
+      );
 
       return savedEvent;
     } catch (error) {
