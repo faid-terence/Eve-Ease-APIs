@@ -523,4 +523,37 @@ export class MailService {
       console.error('Error sending ticket PDF:', error);
     }
   }
+
+  async sendTicketCreationGuide(userEmail: string, user: string) {
+    try {
+      const appName = this.configService.get<string>('APP_NAME');
+
+      await this.mailerService.sendMail({
+        to: userEmail,
+        from: `"${appName} Support Team" <support@example.com>`,
+        subject: `${appName} Ticket Creation Guide`,
+        text: `Hi ${user},\n\nWelcome to ${appName}! We're glad you're here. If you need assistance or want to report an issue, creating a support ticket is easy. Just follow these steps:\n\n1. Log in to your ${appName} account.\n2. Navigate to the dashboard.\n3. Click on the "Support" or "Help" section.\n4. Choose "Create a New Ticket" option.\n5. Fill in the required details, including a brief description of your issue or request.\n6. Submit the ticket.\n\nOur support team will review your ticket promptly and assist you accordingly.\n\nIf you have any questions or encounter any difficulties, feel free to reach out to us at support@example.com.\n\nBest regards,\n${appName} Team`,
+        html: `
+            <body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4;">
+                <div style="background-color: #fff; max-width: 600px; margin: 20px auto; padding: 20px; border-radius: 5px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);">
+                    <h2 style="color: #333;">${appName} Ticket Creation Guide</h2>
+                    <p style="font-size: 16px; color: #555;">Hi ${user},</p>
+                    <p style="font-size: 16px; color: #555;">Welcome to ${appName}! We're glad you're here. If you need assistance or want to report an issue, creating a support ticket is easy. Just follow these steps:</p>
+                    <ol style="font-size: 16px; color: #555; padding-left: 20px;">
+                        <li>Log in to your ${appName} account.</li>
+                        <li>Navigate to the dashboard.</li>
+                        <li>Click on the "Support" or "Help" section.</li>
+                        <li>Choose "Create a New Ticket" option.</li>
+                        <li>Fill in the required details, including a brief description of your issue or request.</li>
+                        <li>Submit the ticket.</li>
+                    </ol>
+                    <p style="font-size: 16px; color: #555;">Our support team will review your ticket promptly and assist you accordingly.</p>
+                    <p style="font-size: 16px; color: #555;">If you have any questions or encounter any difficulties, feel free to reach out to us at <a href="mailto:support@example.com">support@example.com</a>.</p>
+                    <p style="font-size: 16px; color: #555;">Best regards,<br>${appName} Team</p>
+                </div>
+            </body>
+        `,
+      });
+    } catch (error) {}
+  }
 }
