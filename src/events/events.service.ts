@@ -15,7 +15,7 @@ import User from 'src/user/Schema/User.entity';
 import { MailService } from 'src/mail/mail.service';
 import { subscribe } from 'diagnostics_channel';
 import { SubscribersService } from 'src/subscribers/subscribers.service';
-import { MoreThan } from 'typeorm';
+import { MoreThan, LessThan } from 'typeorm';
 
 @Injectable()
 export class EventsService {
@@ -66,9 +66,7 @@ export class EventsService {
       }
       const organizer = await this.organizerRepository.findOne({
         where: { id: userId },
-        // select: ['password', 'verificationToken, isVerified', 'profilePhoto']
       });
-
       const newEvent = await this.eventRepository.create({
         Event_Name: EventName,
         Event_Description: EventDescription,
@@ -78,6 +76,10 @@ export class EventsService {
         Event_Image: EventPhoto,
         organizer: organizer,
       });
+      const currentDate = new Date();
+      if (newEvent.Event_Date < currentDate) {
+        throw new BadRequestException('Event date cannot be in the past');
+      }
 
       const savedEvent = await this.eventRepository.save(newEvent);
 
@@ -96,7 +98,7 @@ export class EventsService {
       const currentDate = new Date();
       const events = await this.eventRepository.find({
         where: { isAvailable: true, Event_Date: MoreThan(currentDate) },
-        order: { Event_Date: 'ASC' }, // Order events by Event_Date in ascending order
+        order: { Event_Date: 'ASC' },
       });
 
       if (!events || events.length === 0) {

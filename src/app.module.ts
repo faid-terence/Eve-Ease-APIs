@@ -19,7 +19,7 @@ import { MessagesModule } from './messages/messages.module';
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      url: process.env.DATABASE_URL,
+      url: process.env.DEV_DATABASE_URL,
       entities: ['dist/**/*.entity.js'],
       synchronize: true,
     }),
