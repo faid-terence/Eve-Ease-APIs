@@ -1,0 +1,38 @@
+version: '3'
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    environment:
+      - DATABASE_HOST=db
+      - DATABASE_PORT=5432
+      - DATABASE_USER=postgres
+      - DATABASE_PASSWORD=thestunna420
+      - DATABASE_NAME=Events
+      - JWT_SECRET=your_secret_key
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: on-failure
+
+  db:
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=thestunna420
+      - POSTGRES_DB=Events
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: on-failure
+
+volumes:
+  postgres-data: 
