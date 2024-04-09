@@ -16,12 +16,8 @@ COPY . .
 # Build the NestJS application
 RUN npm run build
 
-# Set the environment variables
-ENV DEV_DATABASE_URL=postgres://postgres:thestunna420@localhost:5432/Events
-ENV JWT_SECRET=Faid&Ivan2024
-
 # Expose the port your NestJS app is running on (default is 3000)
 EXPOSE 3000
 
 # Start the NestJS application
-CMD [ "npm", "run", "start:prod" ]
+CMD [ "npm", "run", "start:dev" ]
