@@ -1,0 +1,22 @@
+version: '3'
+services:
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - DEV_DATABASE_URL=postgres://postgres:thestunna420@localhost:5432/Events
+      - JWT_SECRET=Faid&Ivan2024
+    depends_on:
+      - db
+  db:
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=thestunna420
+      - POSTGRES_DB=Events
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
+volumes:
+  postgres-data:
