@@ -19,15 +19,9 @@ import { MessagesModule } from './messages/messages.module';
   imports: [
     TypeOrmModule.forRoot({
       type: 'postgres',
-      host: 'db', // Use the service name from the Docker Compose file
-      port: 5432,
-      username: 'postgres',
-      password: 'thestunna420',
-      database: 'Events',
+      url: process.env.DATABASE_URL,
       entities: ['dist/**/*.entity.js'],
       synchronize: true,
-      retryAttempts: 5, // Increase the number of retries
-      retryDelay: 3000, // Increase the delay between retries (3 seconds)
     }),
     AuthModule,
     UserModule,
