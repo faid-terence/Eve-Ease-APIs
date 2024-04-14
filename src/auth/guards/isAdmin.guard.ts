@@ -31,6 +31,10 @@ export class IsAdminGuard implements CanActivate {
         );
       }
       return true;
-    } catch (error) {}
+    } catch (error) {
+      throw new ForbiddenException(
+        error.message || 'Session expired! Please sign in',
+      );
+    }
   }
 }
