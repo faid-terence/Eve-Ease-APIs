@@ -1,5 +1,5 @@
 # Use the official Node.js image as the base
-FROM node:16-alpine
+FROM node:20-alpine
 
 # Set the working directory
 WORKDIR /app
@@ -20,4 +20,4 @@ RUN npm run build
 EXPOSE 3000
 
 # Start the NestJS application
-CMD [ "npm", "run", "start:prod" ]
+CMD [ "npm", "run", "start:dev" ]

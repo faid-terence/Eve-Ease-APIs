@@ -117,6 +117,7 @@ export class AuthService {
       name: existUser.fullNames,
       photo: existUser.profilePhoto,
       isAdmin: existUser.isAdmin,
+      email: existUser.email,
     });
 
     return {

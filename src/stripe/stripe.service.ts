@@ -54,36 +54,8 @@ export class StripeService {
   }
 
   async sendUserTicketAfterPayment(orderId: number, email: string) {
-    try {
-      const order = await this.orderRepository.findOne({
-        where: { id: orderId },
-        relations: ['tickets'],
-      });
-
-      if (!order) {
-        throw new Error('Order not found.');
-      }
-
-      if (order.isPaid) {
-        return {
-          message: 'Ticket has already been sent to the user.',
-        };
-      }
-
-      order.isPaid = true;
-      await this.orderRepository.save(order);
-
-      // Send ticket to user
-      await this.mailServices.sendTicketPdfAfterPayment(email);
-
-      return {
-        message: 'Ticket sent to the user successfully.',
-      };
-    } catch (error) {
-      // Log error or handle appropriately
-      console.error('Error sending ticket:', error);
-      throw new Error('Failed to send ticket. Please try again later.');
-    }
+    await this.createPaymentIntent(orderId);
+    await this.mailServices.sendTicketPdfAfterPayment(email);
   }
 
   async getSuccesfulPayment(sessionId: string) {

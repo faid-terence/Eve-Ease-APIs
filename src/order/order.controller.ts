@@ -73,7 +73,7 @@ export class OrderController {
   @UseGuards(AuthGuard)
   async createPaymentIntent(
     @Param('orderId') orderId: number,
-    @Req() req: Request & { user: { id: number } },
+    @Req() req: Request & { user: { email: string } },
   ) {
     return this.stripeServices.createPaymentIntent(orderId);
   }
