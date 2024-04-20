@@ -39,7 +39,7 @@ export class StripeService {
         },
       ],
       mode: 'payment',
-      success_url: `http://localhost:3000/payment/success/:${orderId}`,
+      success_url: `http://localhost:5173/payment-successful`,
       cancel_url: 'http://localhost:3000/payment/cancel',
     });
 
@@ -51,11 +51,6 @@ export class StripeService {
     return {
       paymentUrl: session.url,
     };
-  }
-
-  async sendUserTicketAfterPayment(orderId: number, email: string) {
-    await this.createPaymentIntent(orderId);
-    await this.mailServices.sendTicketPdfAfterPayment(email);
   }
 
   async getSuccesfulPayment(sessionId: string) {
