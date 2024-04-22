@@ -22,4 +22,10 @@ export default class Ticket {
 
   @Column()
   availableQuantity: number;
+
+  @Column()
+  soldQuantity: number;
+
+  @Column()
+  companyLogo: string;
 }
