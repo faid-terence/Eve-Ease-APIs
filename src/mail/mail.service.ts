@@ -456,7 +456,6 @@ export class MailService {
             }
             body {
               font-family: "Montserrat", sans-serif;
-              background: linear-gradient(135deg, #47a847, #2e8b2e);
               display: flex;
               justify-content: center;
               align-items: center;
