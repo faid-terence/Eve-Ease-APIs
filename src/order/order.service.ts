@@ -57,7 +57,9 @@ export class OrderService {
 
   async viewAllOrders() {
     try {
-      return this.orderRepository.find({ relations: ['tickets', 'user'] });
+      return this.orderRepository.find({
+        relations: ['tickets', 'user'],
+      });
     } catch (error) {
       return new BadRequestException(error.message);
     }
@@ -113,6 +115,26 @@ export class OrderService {
       }
       order.isPaid = true;
       return this.orderRepository.save(order);
+    } catch (error) {
+      return new BadRequestException(error.message);
+    }
+  }
+  // return order and owner
+
+  async getOrderAndOwner(orderId: number) {
+    try {
+      return this.orderRepository.findOne({
+        where: { id: orderId },
+        relations: ['user'],
+      });
+    } catch (error) {
+      return new BadRequestException(error.message);
+    }
+  }
+
+  async getAllOrdersAndOwners() {
+    try {
+      return this.orderRepository.find({ relations: ['user'] });
     } catch (error) {
       return new BadRequestException(error.message);
     }

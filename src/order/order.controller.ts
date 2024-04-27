@@ -8,6 +8,7 @@ import {
   Get,
   Delete,
   Put,
+  Patch,
 } from '@nestjs/common';
 import { OrderService } from './order.service';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
@@ -97,5 +98,9 @@ export class OrderController {
     } catch (error) {
       return { message: error.message };
     }
+  }
+  @Patch('/owners')
+  async getOwners() {
+    return this.orderService.getAllOrdersAndOwners();
   }
 }

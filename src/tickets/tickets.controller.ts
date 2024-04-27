@@ -42,8 +42,7 @@ export class TicketsController {
     @Body('email') email: string,
   ) {
     try {
-      const pdfPath = await this.mailServices.generateTicketPDF(eventName);
-      await this.mailServices.sendTicketByEmail(email, pdfPath);
+      await this.mailServices.sendTicketPdfAfterPayment(email);
       return { message: 'Ticket sent successfully' };
     } catch (error) {
       return { error: 'Error generating or sending ticket' };

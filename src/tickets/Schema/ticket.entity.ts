@@ -23,7 +23,7 @@ export default class Ticket {
   @Column()
   availableQuantity: number;
 
-  @Column()
+  @Column({ default: 0 })
   soldQuantity: number;
 
   @Column()
