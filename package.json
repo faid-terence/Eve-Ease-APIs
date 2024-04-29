@@ -36,6 +36,7 @@
     "pdfkit": "^0.14.0",
     "pg": "^8.11.3",
     "puppeteer": "^22.6.1",
+    "qrcode": "^1.5.3",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
     "stripe": "^14.18.0",
