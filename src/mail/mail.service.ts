@@ -1,14 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
-import { use } from 'passport';
 import { ConfigService } from '@nestjs/config';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as pdfkit from 'pdfkit';
 import * as PDFDocument from 'pdfkit';
 import * as wkhtmltopdf from 'wkhtmltopdf-installer';
-import * as htmlPdf from 'html-pdf';
 import * as puppeteer from 'puppeteer';
+import * as qrcode from 'qrcode';
 
 import User from 'src/user/Schema/User.entity';
 @Injectable()
@@ -84,127 +82,6 @@ export class MailService {
   }
 
   // send email to subscribers when a new post is created
-  // async sendNewPostEmail(email: string, eventId: number) {
-  //   try {
-  //     const appName = this.configService.get<string>('APP_NAME');
-  //     const eventLink = `http://localhost:3000/event/${eventId}`;
-
-  //     const htmlContent = `
-  //       <!DOCTYPE html>
-  //       <html lang="en">
-  //         <head>
-  //           <meta charset="UTF-8" />
-  //           <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  //           <title>Event Tickets</title>
-  //           <style>
-  //             @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap");
-  //             html, body {
-  //               height: 100%;
-  //               margin: 0;
-  //               padding: 0;
-  //             }
-  //             body {
-  //               font-family: "Montserrat", sans-serif;
-  //               background: linear-gradient(135deg, #47a847, #2e8b2e);
-  //               display: flex;
-  //               justify-content: center;
-  //               align-items: center;
-  //             }
-  //             .ticket-container {
-  //               perspective: 1000px;
-  //             }
-  //             .ticket {
-  //               background: linear-gradient(135deg, #47a847, #2e8b2e);
-  //               color: #fff;
-  //               width: 300px;
-  //               height: 500px;
-  //               border-radius: 20px;
-  //               box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-  //               display: flex;
-  //               flex-direction: column;
-  //               align-items: center;
-  //               justify-content: space-between;
-  //               padding: 20px;
-  //               position: relative;
-  //               transform-style: preserve-3d;
-  //               transition: transform 0.5s;
-  //             }
-  //             .ticket:hover {
-  //               transform: rotateY(20deg);
-  //             }
-  //             .event-info {
-  //               text-align: center;
-  //             }
-  //             .event-info h2 {
-  //               font-size: 24px;
-  //               margin-bottom: 10px;
-  //             }
-  //             .qr-code {
-  //               width: 120px;
-  //               height: 120px;
-  //               background-color: #fff;
-  //               border-radius: 10px;
-  //               display: flex;
-  //               justify-content: center;
-  //               align-items: center;
-  //             }
-  //             .qr-code img {
-  //               max-width: 100%;
-  //               max-height: 100%;
-  //             }
-  //             .ticket-details {
-  //               text-align: center;
-  //             }
-  //           </style>
-  //         </head>
-  //         <body>
-  //           <div class="ticket-container">
-  //             <div class="ticket">
-  //               <div class="event-info">
-  //                 <h2>Concert Event</h2>
-  //                 <p>Main Stage</p>
-  //                 <p>June 15, 2024 - 8:00 PM</p>
-  //               </div>
-  //               <div class="qr-code">
-  //               <img src="src/images/qr.png" alt="QR Code" />
-  //               </div>
-  //               <div class="ticket-details">
-  //                 <p>Ticket No: 12345678</p>
-  //                 <p>Seat: A12</p>
-  //               </div>
-  //             </div>
-  //           </div>
-  //         </body>
-  //       </html>
-  //     `;
-
-  //     const browser = await puppeteer.launch();
-  //     const page = await browser.newPage();
-  //     await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
-  //     const pdfBuffer = await page.pdf({
-  //       printBackground: true,
-  //     });
-  //     await browser.close();
-
-  //     await this.mailerService.sendMail({
-  //       to: email,
-  //       from: `"${appName} Support Team" <support@yourdomain.com>`,
-  //       subject: 'New Post Notification',
-  //       attachments: [
-  //         {
-  //           filename: 'event_notification.pdf',
-  //           content: pdfBuffer,
-  //         },
-  //       ],
-  //     });
-
-  //     console.log('New post email notification sent successfully.');
-  //   } catch (error) {
-  //     console.error('Error sending new post email notification:', error);
-  //   }
-  // }
-
-  // send email to subscribers when a new post is created
   async sendNewPostEmail(email: string, eventId: number) {
     try {
       const appName = this.configService.get<string>('APP_NAME');
@@ -269,38 +146,6 @@ export class MailService {
       console.error('Error sending ticket email:', error);
     }
   }
-
-  // async generateTicketPDF(ticketData: TicketData): Promise<string> {
-  //   return new Promise<string>((resolve, reject) => {
-  //     try {
-  //       // Create a new PDF document
-  //       const doc = new pdfkit();
-  //       const pdfPath = path.join(
-  //         __dirname,
-  //         `ticket_${ticketData.eventName.replace(/\s+/g, '_').toLowerCase()}.pdf`,
-  //       );
-
-  //       // Pipe the PDF content to a file
-  //       doc.pipe(fs.createWriteStream(pdfPath));
-
-  //       // Add content to the PDF (customize as per your requirements)
-  //       doc.text(`Event Name: ${ticketData.eventName}`);
-  //       doc.text(`Ticket Holder Name: ${ticketData.name}`);
-  //       doc.text(`Seat: ${ticketData.seat}`);
-  //       doc.text(`Date: ${ticketData.date}`);
-  //       doc.text(`Time: ${ticketData.time}`);
-  //       doc.text(`Price: ${ticketData.price}`);
-  //       // Add more ticket details as needed
-
-  //       // Finalize the PDF
-  //       doc.end();
-
-  //       resolve(pdfPath);
-  //     } catch (error) {
-  //       reject(error);
-  //     }
-  //   });
-  // }
 
   async sendTicketToUser(user: User, ticketData: any): Promise<void> {
     try {
@@ -440,6 +285,15 @@ export class MailService {
   async sendTicketPdfAfterPayment(userEmail: string) {
     const appName = this.configService.get<string>('APP_NAME');
     try {
+      // Generate a random string for QR code
+      const randomString = Math.random().toString(36).substring(2, 15);
+
+      // Create a QR code image buffer
+      const qrCodeBuffer = await qrcode.toBuffer(randomString, { type: 'png' });
+
+      // Create a base64 string from the buffer
+      const qrCodeBase64 = qrCodeBuffer.toString('base64');
+
       const htmlContent = `
       <!DOCTYPE html>
       <html lang="en">
@@ -516,7 +370,7 @@ export class MailService {
                 <p>June 15, 2024 - 8:00 PM</p>
               </div>
               <div class="qr-code">
-              <img src="src/images/qr.png" alt="QR Code" />
+                <img src="data:image/png;base64,${qrCodeBase64}" alt="QR Code" />
               </div>
               <div class="ticket-details">
                 <p>Ticket No: 12345678</p>
@@ -533,7 +387,6 @@ export class MailService {
       const pdfBuffer = await page.pdf({
         printBackground: true,
       });
-
       await browser.close();
 
       await this.mailerService.sendMail({
