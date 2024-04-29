@@ -392,7 +392,7 @@ export class MailService {
       await this.mailerService.sendMail({
         to: userEmail,
         from: `"${appName} Support Team" <support@yourdomain.com>`,
-        subject: 'New Post Notification',
+        subject: 'Your Event Ticket',
         attachments: [
           {
             filename: 'ticknet_ticket.pdf',
