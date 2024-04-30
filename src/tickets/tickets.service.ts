@@ -23,7 +23,6 @@ export class TicketsService {
 
     @InjectRepository(User)
     private organizerRepository: Repository<User>,
-    
   ) {}
 
   // organizer create tickets for their own events
@@ -160,5 +159,25 @@ export class TicketsService {
     }
   }
 
-
+  async validateTicket(ticketId: number) {
+    try {
+      const ticket = await this.ticketRepository.findOne({
+        where: { id: ticketId },
+        relations: ['event'],
+      });
+      if (!ticket) {
+        throw new NotFoundException('Ticket not found');
+      }
+      if (ticket.availableQuantity < 1) {
+        throw new BadRequestException('Ticket is sold out');
+      }
+      ticket.isVerified = true;
+      await this.ticketRepository.save(ticket);
+      return {
+        message: 'Ticket validated successfully',
+      };
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
 }
