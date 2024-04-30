@@ -168,8 +168,8 @@ export class TicketsService {
       if (!ticket) {
         throw new NotFoundException('Ticket not found');
       }
-      if (ticket.availableQuantity < 1) {
-        throw new BadRequestException('Ticket is sold out');
+      if (ticket.isVerified) {
+        throw new BadRequestException('Ticket already verified');
       }
       ticket.isVerified = true;
       await this.ticketRepository.save(ticket);
