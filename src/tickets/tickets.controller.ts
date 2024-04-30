@@ -33,6 +33,10 @@ export class TicketsController {
   async verifyTicket(@Param('ticketId') ticketId: number) {
     return this.ticketsService.validateTicket(ticketId);
   }
+  @Get('/event-details/:ticketId')
+  async getEventDetails(@Param('ticketId') ticketId: number) {
+    return this.ticketsService.getEventDetails(ticketId);
+  }
 
   @Get('/organizer')
   @UseGuards(AuthGuard)

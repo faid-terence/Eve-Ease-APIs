@@ -180,4 +180,19 @@ export class TicketsService {
       throw new BadRequestException(error.message);
     }
   }
+
+  async getEventDetails(ticketId: number) {
+    try {
+      const ticket = await this.ticketRepository.findOne({
+        where: { id: ticketId },
+        relations: ['event'],
+      });
+      if (!ticket) {
+        throw new NotFoundException('Ticket not found');
+      }
+      return ticket.event;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
+  }
 }
