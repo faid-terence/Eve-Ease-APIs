@@ -42,11 +42,11 @@ export class TicketsController {
   }
   @Put('/send-ticket')
   async generateAndSendTicketByEmail(
-    @Body('eventName') eventName: string,
     @Body('email') email: string,
+    @Body('ticketId') ticketId: number,
   ) {
     try {
-      await this.mailServices.sendTicketPdfAfterPayment(email);
+      await this.mailServices.sendTicketPdfAfterPayment(email, ticketId);
       return { message: 'Ticket sent successfully' };
     } catch (error) {
       return { error: 'Error generating or sending ticket' };
