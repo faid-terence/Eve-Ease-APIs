@@ -28,4 +28,7 @@ export default class Ticket {
 
   @Column()
   companyLogo: string;
+
+  @Column({ default: false })
+  isVerified: boolean;
 }
