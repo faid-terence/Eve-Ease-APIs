@@ -286,7 +286,7 @@ export class MailService {
     const appName = this.configService.get<string>('APP_NAME');
     try {
       // Generate a random string for QR code
-      const randomString = Math.random().toString(36).substring(2, 15);
+      // const randomString = Math.random().toString(36).substring(2, 15);
 
       const verificationLink = `http://localhost:3000/tickets/verify-ticket/${ticketId}`;
 
