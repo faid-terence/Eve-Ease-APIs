@@ -282,14 +282,18 @@ export class MailService {
     });
   }
 
-  async sendTicketPdfAfterPayment(userEmail: string) {
+  async sendTicketPdfAfterPayment(userEmail: string, ticketId: number) {
     const appName = this.configService.get<string>('APP_NAME');
     try {
       // Generate a random string for QR code
       const randomString = Math.random().toString(36).substring(2, 15);
 
+      const verificationLink = `http://localhost:3000/tickets/verify-ticket/${ticketId}`;
+
       // Create a QR code image buffer
-      const qrCodeBuffer = await qrcode.toBuffer(randomString, { type: 'png' });
+      const qrCodeBuffer = await qrcode.toBuffer(verificationLink, {
+        type: 'png',
+      });
 
       // Create a base64 string from the buffer
       const qrCodeBase64 = qrCodeBuffer.toString('base64');
