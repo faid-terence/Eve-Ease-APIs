@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { MailerService } from '@nestjs-modules/mailer';
 import { ConfigService } from '@nestjs/config';
+import { TicketsService } from 'src/tickets/tickets.service';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as PDFDocument from 'pdfkit';
@@ -14,6 +15,7 @@ export class MailService {
   constructor(
     private mailerService: MailerService,
     private configService: ConfigService,
+    // private ticketsService: TicketsService,
   ) {}
 
   async sendUserEmail(user: string, verificationToken: string, email: string) {
@@ -282,7 +284,11 @@ export class MailService {
     });
   }
 
-  async sendTicketPdfAfterPayment(userEmail: string, ticketId: number) {
+  async sendTicketPdfAfterPayment(
+    userEmail: string,
+    ticketId: number,
+    eventDetails,
+  ) {
     const appName = this.configService.get<string>('APP_NAME');
     try {
       // Generate a random string for QR code
@@ -369,9 +375,9 @@ export class MailService {
           <div class="ticket-container">
             <div class="ticket">
               <div class="event-info">
-                <h2>Concert Event</h2>
-                <p>Main Stage</p>
-                <p>June 15, 2024 - 8:00 PM</p>
+                <h2>${eventDetails.Event_Name}</h2>
+                <p>${eventDetails.Event_Venue}</p>
+                <p>${eventDetails.Event_Date}</p>
               </div>
               <div class="qr-code">
                 <img src="data:image/png;base64,${qrCodeBase64}" alt="QR Code" />
