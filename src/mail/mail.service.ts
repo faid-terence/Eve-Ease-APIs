@@ -301,6 +301,8 @@ export class MailService {
         type: 'png',
       });
 
+      const randomTicketNumber = Math.floor(Math.random() * 1000000000);
+
       // Create a base64 string from the buffer
       const qrCodeBase64 = qrCodeBuffer.toString('base64');
 
@@ -383,7 +385,7 @@ export class MailService {
                 <img src="data:image/png;base64,${qrCodeBase64}" alt="QR Code" />
               </div>
               <div class="ticket-details">
-                <p>Ticket No: 12345678</p>
+                <p>Ticket No: ${randomTicketNumber}</p>
                 <p>Seat: A12</p>
               </div>
             </div>
