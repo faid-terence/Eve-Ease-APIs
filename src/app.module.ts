@@ -14,6 +14,7 @@ import { PaymentModule } from './payment/payment.module';
 import { StripeModule } from './stripe/stripe.module';
 import { SubscribersModule } from './subscribers/subscribers.module';
 import { MessagesModule } from './messages/messages.module';
+import { FlutterwaveModule } from './flutterwave/flutterwave.module';
 
 @Module({
   imports: [
@@ -42,6 +43,7 @@ import { MessagesModule } from './messages/messages.module';
     StripeModule,
     SubscribersModule,
     MessagesModule,
+    FlutterwaveModule,
   ],
   controllers: [AppController],
   providers: [AppService],
