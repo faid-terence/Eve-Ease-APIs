@@ -14,7 +14,7 @@ import { PaymentModule } from './payment/payment.module';
 import { StripeModule } from './stripe/stripe.module';
 import { SubscribersModule } from './subscribers/subscribers.module';
 import { MessagesModule } from './messages/messages.module';
-import { FlutterwaveModule } from './flutterwave/flutterwave.module';
+// import { FlutterwaveModule } from './flutterwave/flutterwave.module';
 
 @Module({
   imports: [
@@ -34,7 +34,7 @@ import { FlutterwaveModule } from './flutterwave/flutterwave.module';
       useFactory: async (configService: ConfigService) => ({
         global: true,
         secret: configService.get<string>('JWT_SECRET'),
-        signOptions: { expiresIn: '60s' },
+        signOptions: { expiresIn: '1h' },
       }),
       inject: [ConfigService],
     }),
@@ -43,7 +43,7 @@ import { FlutterwaveModule } from './flutterwave/flutterwave.module';
     StripeModule,
     SubscribersModule,
     MessagesModule,
-    FlutterwaveModule,
+    // FlutterwaveModule,
   ],
   controllers: [AppController],
   providers: [AppService],
