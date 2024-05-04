@@ -48,13 +48,15 @@ export class TicketsController {
   async generateAndSendTicketByEmail(
     @Body('email') email: string,
     @Body('ticketId') ticketId: number,
+    @Body('numberOfTickets') numberOfTickets: number,
   ) {
     try {
       const eventDetails = await this.ticketsService.getEventDetails(ticketId);
-      await this.mailServices.sendTicketPdfAfterPayment(
+      await this.mailServices.sendTicketsPdfAfterPayment(
         email,
         ticketId,
         eventDetails,
+        numberOfTickets,
       );
       return { message: 'Ticket sent successfully' };
     } catch (error) {
