@@ -61,6 +61,15 @@ export class OrderController {
     return this.orderService.deleteOrder(orderId);
   }
 
+  @Put('/:orderId/payment/status')
+  @UseGuards(AuthGuard)
+  async updateOrderStatusByUser(
+    @Param('orderId') orderId: number,
+    @Req() req: Request & { user: { id: number } },
+  ) {
+    return this.orderService.updateOrderPaymentStatus(orderId);
+  }
+
   @Get('/:orderId')
   @UseGuards(AuthGuard)
   async viewOrder(
