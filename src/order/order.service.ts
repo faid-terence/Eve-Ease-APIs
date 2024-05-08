@@ -139,4 +139,23 @@ export class OrderService {
       return new BadRequestException(error.message);
     }
   }
+
+  async updateOrderPaymentStatus(orderId: number) {
+    try {
+      const order = await this.orderRepository.findOne({
+        where: { id: orderId },
+      });
+      if (!order) {
+        return new BadRequestException('Order not found');
+      }
+
+      if (order.isPaid) {
+        return new BadRequestException('Order already paid for');
+      }
+      order.isPaid = true;
+      return this.orderRepository.save(order);
+    } catch (error) {
+      return new BadRequestException(error.message);
+    }
+  }
 }
