@@ -13,9 +13,8 @@ import UpdateEventDTO from './DTO/update-event.dto';
 import Ticket from 'src/tickets/Schema/ticket.entity';
 import User from 'src/user/Schema/User.entity';
 import { MailService } from 'src/mail/mail.service';
-import { subscribe } from 'diagnostics_channel';
 import { SubscribersService } from 'src/subscribers/subscribers.service';
-import { MoreThan, LessThan } from 'typeorm';
+import { MoreThan } from 'typeorm';
 
 @Injectable()
 export class EventsService {

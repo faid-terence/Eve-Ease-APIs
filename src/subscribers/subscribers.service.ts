@@ -1,6 +1,5 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { subscribe } from 'diagnostics_channel';
 import Event from 'src/events/Schema/Event.entity';
 import { MailService } from 'src/mail/mail.service';
 import User from 'src/user/Schema/User.entity';
