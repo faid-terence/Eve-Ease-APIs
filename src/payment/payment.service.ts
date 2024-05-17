@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import Payment from './schema/payment.entity';
 import { Repository } from 'typeorm';
 import Order from 'src/order/schema/order.entity';
-import Stripe from 'stripe';
 
 @Injectable()
 export class PaymentService {
@@ -33,7 +32,4 @@ export class PaymentService {
     payment.status = 'pending';
     return this.paymentRepository.save(payment);
   }
-
-
-
 }

@@ -14,11 +14,9 @@ import RegisterUserDTO from './Dto/SignUp.dto';
 import * as bcrypt from 'bcrypt';
 import LoginUserDto from './Dto/Login.dto';
 import { JwtService } from '@nestjs/jwt';
-import LoginResponseDto from './Dto/LoginResponse.dto';
 import { v4 as uuidv4 } from 'uuid';
 import { randomBytes } from 'crypto';
 import { MailService } from 'src/mail/mail.service';
-import { use } from 'passport';
 import { MoreThan } from 'typeorm';
 
 @Injectable()
@@ -73,7 +71,7 @@ export class AuthService {
         registerDto.email,
       );
 
-      const savedUser = await this.userRepository.save(newUser);
+      await this.userRepository.save(newUser);
 
       return {
         message:
