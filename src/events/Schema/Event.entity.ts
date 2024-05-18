@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import Ticket from '../../tickets/Schema/ticket.entity';
 import User from 'src/user/Schema/User.entity';
+import Review from 'src/reviews/Schema/Review.entity';
 
 @Entity()
 // @Unique(['Event_Name'])
@@ -43,4 +44,7 @@ export default class Event {
   organizer: User;
   @OneToMany(() => Ticket, (ticket) => ticket.event)
   tickets: Ticket[];
+
+  @OneToMany(()=>Review, (review) => review.event)
+  reviews: Review[];
 }

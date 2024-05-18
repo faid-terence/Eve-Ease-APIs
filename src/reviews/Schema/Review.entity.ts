@@ -1,3 +1,4 @@
+import Event from 'src/events/Schema/Event.entity';
 import User from 'src/user/Schema/User.entity';
 import { Entity , PrimaryGeneratedColumn, Column, ManyToMany, ManyToOne} from 'typeorm';
 
@@ -12,6 +13,9 @@ export default class Review {
 
     @Column()
     rating: number;
+
+    @ManyToOne(()=> Event, (event) => event.reviews)
+    event: Event;
 
     // user who reviewed
     @ManyToOne(() => User, (user) => user.reviews)
