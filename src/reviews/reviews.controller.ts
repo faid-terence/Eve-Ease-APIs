@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
 import Review from './Schema/Review.entity';
 
@@ -13,5 +13,10 @@ export class ReviewsController {
     @Body('eventId') eventId: number,
   ) {
     return await this.reviewsService.createReview(review, userId, eventId);
+  }
+
+  @Get()
+  async getReviewsByEventId(@Body('eventId') eventId: number) {
+    return await this.reviewsService.getReviewsByEventId(eventId);
   }
 }

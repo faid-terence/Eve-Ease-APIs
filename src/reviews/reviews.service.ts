@@ -43,4 +43,19 @@ export class ReviewsService {
       throw new Error(error.message);
     }
   }
+
+  async getReviewsByEventId(eventId: number): Promise<Review[]> {
+    try {
+      const reviews = await this.reviewRepository.find({
+        where: { event: { id: eventId } },
+        relations: ['reviewer'],
+      });
+      if (!reviews) {
+        throw new Error('No reviews found');
+      }
+      return reviews;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
 }
