@@ -15,6 +15,7 @@ import { StripeModule } from './stripe/stripe.module';
 import { SubscribersModule } from './subscribers/subscribers.module';
 import { MessagesModule } from './messages/messages.module';
 // import { FlutterwaveModule } from './flutterwave/flutterwave.module';
+import { ReviewsModule } from './reviews/reviews.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { MessagesModule } from './messages/messages.module';
     StripeModule,
     SubscribersModule,
     MessagesModule,
+    ReviewsModule,
     // FlutterwaveModule,
   ],
   controllers: [AppController],
