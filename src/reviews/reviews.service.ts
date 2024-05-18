@@ -58,4 +58,13 @@ export class ReviewsService {
       throw new Error(error.message);
     }
   }
+
+  async getAllReviews(): Promise<Review[]> {
+    try {
+      const reviews = await this.reviewRepository.find();
+      return reviews;
+    } catch (error) {
+      throw new Error(error.message);
+    }
+  }
 }

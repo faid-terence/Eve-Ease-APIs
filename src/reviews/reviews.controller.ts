@@ -1,7 +1,9 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
 import { ReviewsService } from './reviews.service';
 import Review from './Schema/Review.entity';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('reviews')
 @Controller('reviews')
 export class ReviewsController {
   constructor(private readonly reviewsService: ReviewsService) {}
@@ -15,8 +17,13 @@ export class ReviewsController {
     return await this.reviewsService.createReview(review, userId, eventId);
   }
 
-  @Get()
+  @Get('event')
   async getReviewsByEventId(@Body('eventId') eventId: number) {
     return await this.reviewsService.getReviewsByEventId(eventId);
+  }
+
+  @Get()
+  async getAllReviews() {
+    return await this.reviewsService.getAllReviews();
   }
 }
