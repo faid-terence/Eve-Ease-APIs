@@ -71,7 +71,7 @@ export class EventsService {
         throw new NotFoundException('Organizer not found');
       }
 
-      if (!organizer.isDocumentUploaded) {
+      if (organizer.isDocumentUploaded == false) {
         throw new BadRequestException(
           'Organizer must upload identification document before creating an event',
         );
