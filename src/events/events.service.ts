@@ -66,6 +66,16 @@ export class EventsService {
       const organizer = await this.organizerRepository.findOne({
         where: { id: userId },
       });
+
+      if (!organizer) {
+        throw new NotFoundException('Organizer not found');
+      }
+
+      if (!organizer.isDocumentUploaded) {
+        throw new BadRequestException(
+          'Organizer must upload identification document before creating an event',
+        );
+      }
       const newEvent = await this.eventRepository.create({
         Event_Name: EventName,
         Event_Description: EventDescription,
