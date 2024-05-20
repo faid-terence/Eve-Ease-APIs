@@ -24,7 +24,7 @@ export class OrderService {
 
     // Ensure enough tickets are available
     if (ticket.availableQuantity < quantity) {
-      throw new Error('Insufficient quantity of tickets available');
+      throw new BadRequestException('Insufficient quantity of tickets available');
     }
 
     const totalPrice = ticket.price * quantity;

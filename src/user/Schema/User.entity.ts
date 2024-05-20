@@ -1,5 +1,11 @@
 import Review from 'src/reviews/Schema/Review.entity';
-import { Entity, PrimaryGeneratedColumn, Column, Unique, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  Unique,
+  OneToMany,
+} from 'typeorm';
 
 @Entity()
 @Unique(['email'])
@@ -50,4 +56,7 @@ export default class User {
 
   @OneToMany(() => Review, (review) => review.reviewer)
   reviews: Review[];
+
+  @Column({ default: false })
+  isDocumentUploaded: boolean;
 }
