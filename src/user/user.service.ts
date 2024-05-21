@@ -126,6 +126,10 @@ export class UserService {
         throw new Error('User document not uploaded');
       }
 
+      if (!user.document) {
+        throw new Error('User document not uploaded');
+      }
+
       user.isDocumentUploaded = true;
       await this.userRepository.save(user);
 
@@ -148,6 +152,10 @@ export class UserService {
       }
 
       if (!user.isDocumentUploaded) {
+        throw new Error('User document not uploaded');
+      }
+
+      if (!user.document) {
         throw new Error('User document not uploaded');
       }
 
