@@ -138,4 +138,29 @@ export class UserService {
       );
     }
   }
+
+  async adminRejectionOfDocument(email: string) {
+    try {
+      const user = await this.userRepository.findOne({ where: { email } });
+
+      if (!user) {
+        throw new NotFoundException(`User with email ${email} does not exist`);
+      }
+
+      if (!user.isDocumentUploaded) {
+        throw new Error('User document not uploaded');
+      }
+
+      user.isDocumentUploaded = false;
+      await this.userRepository.save(user);
+
+      return {
+        message: 'Document rejected successfully',
+      };
+    } catch (error) {
+      throw new Error(
+        `Error rejecting document for user with email ${email}: ${error.message}`,
+      );
+    }
+  }
 }

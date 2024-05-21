@@ -58,4 +58,10 @@ export class UserController {
   async approveUserDoc(@Body('userEmail') email: string) {
     return this.userServices.approveUserDocument(email);
   }
+
+  @Post('/reject-user-doc')
+  @UseGuards(IsAdminGuard)
+  async rejectUserDoc(@Body('userEmail') email: string) {
+    return this.userServices.adminRejectionOfDocument(email);
+  }
 }
