@@ -59,4 +59,7 @@ export default class User {
 
   @Column({ default: false })
   isDocumentUploaded: boolean;
+
+  @Column({ nullable: true })
+  document: string;
 }

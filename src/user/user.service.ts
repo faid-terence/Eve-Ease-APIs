@@ -87,4 +87,30 @@ export class UserService {
       message: 'User deleted Succesful',
     };
   }
+
+  async userUploadDocumentForVerification(email: string, document: string) {
+    try {
+      const user = await this.userRepository.findOne({ where: { email } });
+
+      if (!user) {
+        throw new NotFoundException(`User with email ${email} does not exist`);
+      }
+
+      if (user.isDocumentUploaded) {
+        throw new Error('User document already uploaded');
+      }
+
+      user.document = document;
+
+      await this.userRepository.save(user);
+
+      return {
+        message: 'Document uploaded successfully',
+      };
+    } catch (error) {
+      throw new Error(
+        `Error uploading document for user with email ${email}: ${error.message}`,
+      );
+    }
+  }
 }

@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   Patch,
+  Post,
   UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
@@ -39,5 +40,16 @@ export class UserController {
   @Delete('/:userId')
   async deleteUserById(@Param('userId') userId: number) {
     return this.userServices.deleteUser(userId);
+  }
+
+  @Post('/upload-verification-doc')
+  async uploadverifivationDoc(
+    @Body('userEmail') email: string,
+    @Body('verificationDoc') verificationDoc: string,
+  ) {
+    return this.userServices.userUploadDocumentForVerification(
+      email,
+      verificationDoc,
+    );
   }
 }
