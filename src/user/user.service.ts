@@ -113,4 +113,29 @@ export class UserService {
       );
     }
   }
+
+  async approveUserDocument(email: string) {
+    try {
+      const user = await this.userRepository.findOne({ where: { email } });
+
+      if (!user) {
+        throw new NotFoundException(`User with email ${email} does not exist`);
+      }
+
+      if (!user.isDocumentUploaded) {
+        throw new Error('User document not uploaded');
+      }
+
+      user.isDocumentUploaded = true;
+      await this.userRepository.save(user);
+
+      return {
+        message: 'Document approved successfully',
+      };
+    } catch (error) {
+      throw new Error(
+        `Error approving document for user with email ${email}: ${error.message}`,
+      );
+    }
+  }
 }

@@ -52,4 +52,10 @@ export class UserController {
       verificationDoc,
     );
   }
+
+  @Post('/appove-user-doc')
+  @UseGuards(IsAdminGuard)  
+  async approveUserDoc(@Body('userEmail') email: string) {
+    return this.userServices.approveUserDocument(email);
+  }
 }
