@@ -4,11 +4,14 @@ import User from './Schema/User.entity';
 import { Repository } from 'typeorm';
 import UpdateUserDTO from './DTO/UpdateUser.dto';
 import * as bcrypt from 'bcrypt';
+import Ticket from 'src/tickets/Schema/ticket.entity';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private readonly userRepository: Repository<User>,
+    @InjectRepository(Ticket)
+    private readonly ticketRepository: Repository<Ticket>,
   ) {}
 
   async getAllUsers(): Promise<User[]> {
@@ -169,6 +172,22 @@ export class UserService {
       throw new Error(
         `Error rejecting document for user with email ${email}: ${error.message}`,
       );
+    }
+  }
+  async updateUserTickets(userEmail: string, tickets: any[]) {
+    // Assume you have a User entity with a relation to a Ticket entity
+    const user = await this.userRepository.findOne({
+      where: { email: userEmail },
+      relations: ['tickets'],
+    });
+    if (user) {
+      tickets.forEach((ticket) => {
+        const newTicket = this.ticketRepository.create(ticket);
+        user.tickets.push(newTicket);
+      });
+      await this.userRepository.save(user);
+    } else {
+      throw new Error('User not found');
     }
   }
 }

@@ -8,14 +8,17 @@ import * as PDFDocument from 'pdfkit';
 import * as wkhtmltopdf from 'wkhtmltopdf-installer';
 import * as puppeteer from 'puppeteer';
 import * as qrcode from 'qrcode';
+import { EventEmitter2 } from '@nestjs/event-emitter';
 
 import User from 'src/user/Schema/User.entity';
+import { UserService } from 'src/user/user.service';
 @Injectable()
 export class MailService {
   constructor(
     private mailerService: MailerService,
     private configService: ConfigService,
     // private ticketsService: TicketsService,
+    // private readonly userService: UserService,
   ) {}
 
   async sendUserEmail(user: string, verificationToken: string, email: string) {
@@ -289,6 +292,7 @@ export class MailService {
     ticketId: number,
     eventDetails,
     numberOfTickets: number,
+    ticketDetails,
   ) {
     const appName = this.configService.get<string>('APP_NAME');
     try {
@@ -313,95 +317,94 @@ export class MailService {
         const qrCodeBase64 = qrCodeBuffer.toString('base64');
 
         const htmlContent = `
-          <!DOCTYPE html>
-          <html lang="en">
-            <head>
-              <meta charset="UTF-8" />
-              <meta
-                name="viewport"
-                content="width=device-width, initial-scale=1.0"
-              />
-              <title>Event Tickets</title>
-              <style>
-                @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap");
-                html,
-                body {
-                  height: 100%;
-                  margin: 0;
-                  padding: 0;
-                }
-                body {
-                  font-family: "Montserrat", sans-serif;
-                  display: flex;
-                  justify-content: center;
-                  align-items: center;
-                }
-                .ticket-container {
-                  perspective: 1000px;
-                }
-                .ticket {
-                  background: linear-gradient(135deg, #47a847, #2e8b2e);
-                  color: #fff;
-                  width: 300px;
-                  height: 500px;
-                  border-radius: 20px;
-                  box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-                  display: flex;
-                  flex-direction: column;
-                  align-items: center;
-                  justify-content: space-between;
-                  padding: 20px;
-                  position: relative;
-                  transform-style: preserve-3d;
-                  transition: transform 0.5s;
-                }
-                .ticket:hover {
-                  transform: rotateY(20deg);
-                }
-                .event-info {
-                  text-align: center;
-                }
-                .event-info h2 {
-                  font-size: 24px;
-                  margin-bottom: 10px;
-                }
-                .qr-code {
-                  width: 120px;
-                  height: 120px;
-                  background-color: #fff;
-                  border-radius: 10px;
-                  display: flex;
-                  justify-content: center;
-                  align-items: center;
-                }
-                .qr-code img {
-                  max-width: 100%;
-                  max-height: 100%;
-                }
-                .ticket-details {
-                  text-align: center;
-                }
-              </style>
-            </head>
-            <body>
-              <div class="ticket-container">
-                <div class="ticket">
-                  <div class="event-info">
-                    <h2>${eventDetails.Event_Name}</h2>
-                    <p>${eventDetails.Event_Venue}</p>
-                    <p>${eventDetails.Event_Date}</p>
-                  </div>
-                  <div class="qr-code">
-                    <img src="data:image/png;base64,${qrCodeBase64}" alt="QR Code" />
-                  </div>
-                  <div class="ticket-details">
-                    <p>Ticket No: ${randomTicketNumber}</p>
-                    <p>Seat: A12</p>
-                  </div>
+        <!DOCTYPE html>
+        <html lang="en">
+          <head>
+            <meta charset="UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <title>Event Tickets</title>
+            <style>
+              @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap");
+              html,
+              body {
+                height: 100%;
+                margin: 0;
+                padding: 0;
+                background: url('${ticketDetails.companyLogo}') no-repeat center center fixed;
+                background-size: cover;
+              }
+              body {
+                font-family: "Montserrat", sans-serif;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+              }
+              .ticket-container {
+                perspective: 1000px;
+              }
+              .ticket {
+                background: linear-gradient(135deg, #47a847, #2e8b2e);
+                color: #fff;
+                width: 300px;
+                height: 500px;
+                border-radius: 20px;
+                box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: space-between;
+                padding: 20px;
+                position: relative;
+                transform-style: preserve-3d;
+                transition: transform 0.5s;
+              }
+              .ticket:hover {
+                transform: rotateY(20deg);
+              }
+              .event-info {
+                text-align: center;
+              }
+              .event-info h2 {
+                font-size: 24px;
+                margin-bottom: 10px;
+              }
+              .qr-code {
+                width: 120px;
+                height: 120px;
+                background-color: #fff;
+                border-radius: 10px;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+              }
+              .qr-code img {
+                max-width: 100%;
+                max-height: 100%;
+              }
+              .ticket-details {
+                text-align: center;
+              }
+            </style>
+          </head>
+          <body>
+            <div class="ticket-container">
+              <div class="ticket">
+                <div class="event-info">
+                  <h2>${eventDetails.Event_Name}</h2>
+                  <p>${eventDetails.Event_Venue}</p>
+                  <p>${new Date(eventDetails.Event_Date).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+                </div>
+                <div class="qr-code">
+                  <img src="data:image/png;base64,${qrCodeBase64}" alt="QR Code" />
+                </div>
+                <div class="ticket-details">
+                  <p>Ticket No: ${randomTicketNumber}</p>
+                  <p>${ticketDetails.category}</p>
                 </div>
               </div>
-            </body>
-          </html>`;
+            </div>
+          </body>
+        </html>`;
 
         const page = await browser.newPage();
         await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
@@ -431,6 +434,174 @@ export class MailService {
       console.error('Error sending ticket PDF:', error);
     }
   }
+
+  // async sendTicketsPdfAfterPayment(
+  //   userEmail: string,
+  //   ticketId: number,
+  //   eventDetails,
+  //   numberOfTickets: number,
+  // ) {
+  //   const appName = this.configService.get<string>('APP_NAME');
+  //   try {
+  //     const browser = await puppeteer.launch();
+
+  //     const tickets = [];
+
+  //     for (let i = 0; i < numberOfTickets; i++) {
+  //       const randomString = Math.random().toString(36).substring(2, 15);
+
+  //       const verificationLink = `http://localhost:3000/tickets/verify-ticket/${ticketId}`;
+
+  //       // Create a QR code image buffer
+  //       const qrCodeBuffer = await qrcode.toBuffer(
+  //         `${verificationLink}/${randomString}`,
+  //         {
+  //           type: 'png',
+  //         },
+  //       );
+
+  //       const randomTicketNumber = Math.floor(Math.random() * 1000000000);
+
+  //       // Create a base64 string from the buffer
+  //       const qrCodeBase64 = qrCodeBuffer.toString('base64');
+
+  //       const htmlContent = `
+  //         <!DOCTYPE html>
+  //         <html lang="en">
+  //           <head>
+  //             <meta charset="UTF-8" />
+  //             <meta
+  //               name="viewport"
+  //               content="width=device-width, initial-scale=1.0"
+  //             />
+  //             <title>Event Tickets</title>
+  //             <style>
+  //               @import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap");
+  //               html,
+  //               body {
+  //                 height: 100%;
+  //                 margin: 0;
+  //                 padding: 0;
+  //               }
+  //               body {
+  //                 font-family: "Montserrat", sans-serif;
+  //                 display: flex;
+  //                 justify-content: center;
+  //                 align-items: center;
+  //               }
+  //               .ticket-container {
+  //                 perspective: 1000px;
+  //               }
+  //               .ticket {
+  //                 background: linear-gradient(135deg, #47a847, #2e8b2e);
+  //                 color: #fff;
+  //                 width: 300px;
+  //                 height: 500px;
+  //                 border-radius: 20px;
+  //                 box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+  //                 display: flex;
+  //                 flex-direction: column;
+  //                 align-items: center;
+  //                 justify-content: space-between;
+  //                 padding: 20px;
+  //                 position: relative;
+  //                 transform-style: preserve-3d;
+  //                 transition: transform 0.5s;
+  //               }
+  //               .ticket:hover {
+  //                 transform: rotateY(20deg);
+  //               }
+  //               .event-info {
+  //                 text-align: center;
+  //               }
+  //               .event-info h2 {
+  //                 font-size: 24px;
+  //                 margin-bottom: 10px;
+  //               }
+  //               .qr-code {
+  //                 width: 120px;
+  //                 height: 120px;
+  //                 background-color: #fff;
+  //                 border-radius: 10px;
+  //                 display: flex;
+  //                 justify-content: center;
+  //                 align-items: center;
+  //               }
+  //               .qr-code img {
+  //                 max-width: 100%;
+  //                 max-height: 100%;
+  //               }
+  //               .ticket-details {
+  //                 text-align: center;
+  //               }
+  //             </style>
+  //           </head>
+  //           <body>
+  //             <div class="ticket-container">
+  //               <div class="ticket">
+  //                 <div class="event-info">
+  //                   <h2>${eventDetails.Event_Name}</h2>
+  //                   <p>${eventDetails.Event_Venue}</p>
+  //                   <p>${eventDetails.Event_Date}</p>
+  //                 </div>
+  //                 <div class="qr-code">
+  //                   <img src="data:image/png;base64,${qrCodeBase64}" alt="QR Code" />
+  //                 </div>
+  //                 <div class="ticket-details">
+  //                   <p>Ticket No: ${randomTicketNumber}</p>
+  //                   <p>Seat: A12</p>
+  //                 </div>
+  //               </div>
+  //             </div>
+  //           </body>
+  //         </html>`;
+
+  //       const page = await browser.newPage();
+  //       await page.setContent(htmlContent, { waitUntil: 'networkidle0' });
+  //       const pdfBuffer = await page.pdf({
+  //         printBackground: true,
+  //       });
+
+  //       // Save the PDF buffer to a file or storage service
+  //       const ticketFilePath = `/path/to/tickets/ticket_${ticketId}_${i}.pdf`;
+  //       await fs.promises.writeFile(ticketFilePath, pdfBuffer);
+
+  //       // Add the ticket information to the tickets array
+  //       tickets.push({
+  //         ticketId,
+  //         ticketFilePath,
+  //         randomTicketNumber,
+  //         verificationLink: `${verificationLink}/${randomString}`,
+  //       });
+
+  //       await this.mailerService.sendMail({
+  //         to: userEmail,
+  //         from: `"${appName} Support Team" <support@yourdomain.com>`,
+  //         subject: 'Your Event Ticket',
+  //         attachments: [
+  //           {
+  //             filename: `ticket_${ticketId}_${i}.pdf`,
+  //             path: ticketFilePath,
+  //           },
+  //         ],
+  //       });
+
+  //       console.log(
+  //         `Ticket PDF sent for ticket ID ${ticketId} (${i + 1}/${numberOfTickets}) to ${userEmail}`,
+  //       );
+  //     }
+
+  //     await browser.close();
+
+  //     // Emit the event after sending the tickets
+  //     this.eventEmitter.emit(
+  //       'ticket.purchased',
+  //       new TicketPurchasedEvent(userEmail, tickets),
+  //     );
+  //   } catch (error) {
+  //     console.error('Error sending ticket PDF:', error);
+  //   }
+  // }
 
   async sendTicketCreationGuide(userEmail: string, user: string) {
     try {
