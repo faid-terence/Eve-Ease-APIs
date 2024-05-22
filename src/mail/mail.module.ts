@@ -7,6 +7,10 @@ import { TicketsModule } from 'src/tickets/tickets.module';
 import { TicketsService } from 'src/tickets/tickets.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import Ticket from 'src/tickets/Schema/ticket.entity';
+import { UserService } from 'src/user/user.service';
+import { UserModule } from 'src/user/user.module';
+import { EventEmitterModule } from '@nestjs/event-emitter';
+import { TicketListener } from './ticket.listener';
 
 dotenv.config();
 
@@ -29,8 +33,10 @@ dotenv.config();
       },
     }),
     ConfigModule,
+    UserModule,
+    EventEmitterModule.forRoot(),
   ],
-  providers: [MailService],
+  providers: [MailService, TicketListener],
   exports: [MailService],
 })
 export class MailModule {}

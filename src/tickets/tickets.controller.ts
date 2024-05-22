@@ -51,16 +51,20 @@ export class TicketsController {
     @Body('numberOfTickets') numberOfTickets: number,
   ) {
     try {
-      const eventDetails = await this.ticketsService.getEventDetails(ticketId);
+      const {ticketDetails, eventDetails} = await this.ticketsService.getEventDetails(ticketId);
       await this.mailServices.sendTicketsPdfAfterPayment(
         email,
         ticketId,
         eventDetails,
         numberOfTickets,
+        ticketDetails
       );
+
       return { message: 'Ticket sent successfully' };
     } catch (error) {
+      console.log(error);
       return { error: 'Error generating or sending ticket' };
+      
     }
   }
 

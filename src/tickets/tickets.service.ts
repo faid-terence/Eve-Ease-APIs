@@ -187,10 +187,20 @@ export class TicketsService {
         where: { id: ticketId },
         relations: ['event'],
       });
+
       if (!ticket) {
         throw new NotFoundException('Ticket not found');
       }
-      return ticket.event;
+
+      const eventDetails = ticket.event;
+      const ticketDetails = {
+        id: ticket.id,
+        companyLogo: ticket.companyLogo,
+        category: ticket.category,
+        // Add any other ticket-related properties you want to return
+      };
+
+      return { eventDetails, ticketDetails };
     } catch (error) {
       throw new BadRequestException(error.message);
     }
