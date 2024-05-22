@@ -10,7 +10,9 @@ import {
 import { MessagesService } from './messages.service';
 import CreateMessageDto from './DTO/create-message.dto';
 import { IsAdminGuard } from 'src/auth/guards/isAdmin.guard';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('messages')
 @Controller('messages')
 export class MessagesController {
   constructor(private readonly messageServices: MessagesService) {}
