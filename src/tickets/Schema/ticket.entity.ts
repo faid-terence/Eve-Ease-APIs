@@ -6,6 +6,7 @@ import {
   JoinColumn,
 } from 'typeorm';
 import Event from '../../events/Schema/Event.entity';
+import User from 'src/user/Schema/User.entity';
 
 @Entity()
 export default class Ticket {
@@ -31,4 +32,8 @@ export default class Ticket {
 
   @Column({ default: false })
   isVerified: boolean;
+
+  @ManyToOne(() => User, (user) => user.tickets)
+  @JoinColumn({ name: 'user_id' })
+  user: User;
 }

@@ -1,4 +1,5 @@
 import Review from 'src/reviews/Schema/Review.entity';
+import Ticket from 'src/tickets/Schema/ticket.entity';
 import {
   Entity,
   PrimaryGeneratedColumn,
@@ -62,4 +63,10 @@ export default class User {
 
   @Column({ nullable: true })
   document: string;
+
+  @Column({ nullable: true })
+  documentType: string;
+
+  @OneToMany(() => Ticket, (ticket) => ticket.user)
+  purchasedTickets: Ticket[];
 }
