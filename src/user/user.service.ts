@@ -104,11 +104,12 @@ export class UserService {
       }
 
       user.document = document;
+      user.isDocumentUploaded = true;
 
       await this.userRepository.save(user);
 
       return {
-        message: 'Document uploaded successfully',
+        message: 'Document uploaded successfully !!',
       };
     } catch (error) {
       throw new Error(
@@ -123,10 +124,6 @@ export class UserService {
 
       if (!user) {
         throw new NotFoundException(`User with email ${email} does not exist`);
-      }
-
-      if (!user.isDocumentUploaded) {
-        throw new Error('User document not uploaded');
       }
 
       if (!user.document) {

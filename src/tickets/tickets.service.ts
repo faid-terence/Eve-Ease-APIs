@@ -82,7 +82,7 @@ export class TicketsService {
     } catch (error) {
       throw new BadRequestException(error.message);
     }
-  }
+  } 
 
   async updateTicketInformation(ticketId: number, ticketData: Partial<Ticket>) {
     try {
