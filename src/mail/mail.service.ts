@@ -634,4 +634,29 @@ export class MailService {
       });
     } catch (error) {}
   }
+
+  async sendDocumentApprovalEmail(email: string, user: User) {
+    try {
+      const appName = this.configService.get<string>('APP_NAME');
+
+      await this.mailerService.sendMail({
+        to: email,
+        from: `"${appName} Support Team" <support@example.com>`,
+        subject: `${appName} Document Approval`,
+        text: `Hi ${user.name},\n\nYour document has been approved successfully. You can now access all the features of our platform.\n\nBest regards,\n${appName} Team`,
+        html: `
+                    <body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4;">
+                        <div style="background-color: #fff; max-width: 600px; margin: 20px auto; padding: 20px; border-radius: 5px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);">
+                            <h2 style="color: #333;">Document Approval</h2>
+                            <p style="font-size: 16px; color: #555;">Hi ${user.name},</p>
+                            <p style="font-size: 16px; color: #555;">Your document has been approved successfully. You can now access all the features of our platform.</p>
+                            <p style="font-size: 16px; color: #555;">Best regards,<br>${appName} Team</p>
+                        </div>
+                    </body>
+                `,
+      });
+    } catch (error) {
+      console.error('Error sending email:', error);
+    }
+  }
 }
