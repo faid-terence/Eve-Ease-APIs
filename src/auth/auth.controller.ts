@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import RegisterUserDTO from './Dto/SignUp.dto';
 import LoginUserDto from './Dto/Login.dto';
@@ -35,5 +35,10 @@ export class AuthController {
     @Body('newPassword') newPassword: string,
   ) {
     return this.authServices.resetPassword(token, newPassword);
+  }
+
+  @Put('make-admin/:id')
+  async makeUserAdmin(@Param('id') id: number) {
+    return this.authServices.makeAdmin(id);
   }
 }
