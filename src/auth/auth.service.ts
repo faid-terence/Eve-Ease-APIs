@@ -217,4 +217,16 @@ export class AuthService {
       throw new InternalServerErrorException(error.message);
     }
   }
+
+  async makeAdmin(userId: number): Promise<{ message: string }> {
+    const user = await this.userRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new NotFoundException('User not found');
+    }
+    user.isAdmin = true;
+    await this.userRepository.save(user);
+    return {
+      message: 'User is now an admin',
+    };
+  }
 }
