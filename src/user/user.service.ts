@@ -5,6 +5,7 @@ import { Repository } from 'typeorm';
 import UpdateUserDTO from './DTO/UpdateUser.dto';
 import * as bcrypt from 'bcrypt';
 import Ticket from 'src/tickets/Schema/ticket.entity';
+import { MailService } from 'src/mail/mail.service';
 
 @Injectable()
 export class UserService {
@@ -12,6 +13,7 @@ export class UserService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
     @InjectRepository(Ticket)
     private readonly ticketRepository: Repository<Ticket>,
+    private readonly mailService: MailService,
   ) {}
 
   async getAllUsers(): Promise<User[]> {
@@ -132,6 +134,7 @@ export class UserService {
 
       user.isDocumentUploaded = true;
       await this.userRepository.save(user);
+      await this.mailService.sendDocumentApprovalEmail(email, user);
 
       return {
         message: 'Document approved successfully',

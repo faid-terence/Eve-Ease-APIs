@@ -24,7 +24,7 @@ export class MailService {
   async sendUserEmail(user: string, verificationToken: string, email: string) {
     try {
       const appName = this.configService.get<string>('APP_NAME');
-      const verificationLink = `http://localhost:5173/auth/email-verified/${verificationToken}`;
+      const verificationLink = `https://event-ease-v1-2.vercel.app//auth/email-verified/${verificationToken}`;
 
       await this.mailerService.sendMail({
         to: email,
@@ -59,7 +59,7 @@ export class MailService {
   ) {
     try {
       const appName = this.configService.get<string>('APP_NAME');
-      const resetLink = `http://localhost:5173/auth/set-new-password/${resetToken}`;
+      const resetLink = `https://event-ease-v1-2.vercel.app//auth/set-new-password/${resetToken}`;
 
       await this.mailerService.sendMail({
         to: email,
@@ -90,7 +90,7 @@ export class MailService {
   async sendNewPostEmail(email: string, eventId: number) {
     try {
       const appName = this.configService.get<string>('APP_NAME');
-      const eventLink = `http://localhost:3000/event/${eventId}`;
+      const eventLink = `https://eve-ease-apis.onrender.com/event/${eventId}`;
 
       await this.mailerService.sendMail({
         to: email,
@@ -301,7 +301,7 @@ export class MailService {
       for (let i = 0; i < numberOfTickets; i++) {
         const randomString = Math.random().toString(36).substring(2, 15);
 
-        const verificationLink = `http://localhost:3000/tickets/verify-ticket/${ticketId}`;
+        const verificationLink = `https://eve-ease-apis.onrender.com/tickets/verify-ticket/${ticketId}`;
 
         // Create a QR code image buffer
         const qrCodeBuffer = await qrcode.toBuffer(
@@ -450,7 +450,7 @@ export class MailService {
   //     for (let i = 0; i < numberOfTickets; i++) {
   //       const randomString = Math.random().toString(36).substring(2, 15);
 
-  //       const verificationLink = `http://localhost:3000/tickets/verify-ticket/${ticketId}`;
+  //       const verificationLink = `https://eve-ease-apis.onrender.com/tickets/verify-ticket/${ticketId}`;
 
   //       // Create a QR code image buffer
   //       const qrCodeBuffer = await qrcode.toBuffer(
@@ -648,7 +648,7 @@ export class MailService {
                     <body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f4f4f4;">
                         <div style="background-color: #fff; max-width: 600px; margin: 20px auto; padding: 20px; border-radius: 5px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);">
                             <h2 style="color: #333;">Document Approval</h2>
-                            <p style="font-size: 16px; color: #555;">Hi ${user.name},</p>
+                            <p style="font-size: 16px; color: #555;">Hi ${user.fullNames},</p>
                             <p style="font-size: 16px; color: #555;">Your document has been approved successfully. You can now access all the features of our platform.</p>
                             <p style="font-size: 16px; color: #555;">Best regards,<br>${appName} Team</p>
                         </div>
