@@ -1,10 +1,13 @@
 import { Injectable } from '@nestjs/common';
-import { InjectConnection } from '@nestjs/typeorm';
-import { Connection } from 'typeorm';
+import { InjectConnection, InjectDataSource } from '@nestjs/typeorm';
+import { Connection, DataSource } from 'typeorm';
 
 @Injectable()
 export class DatabaseService {
-  constructor(@InjectConnection() private readonly connection: Connection) {}
+  constructor(
+    @InjectConnection() private readonly connection: Connection,
+    @InjectDataSource() private readonly dataSource: DataSource,
+  ) {}
 
   async deleteAllRelations() {
     const queryRunner = this.connection.createQueryRunner();
@@ -25,6 +28,29 @@ export class DatabaseService {
       console.log('All tables deleted successfully');
     } catch (error) {
       console.error('An error occurred:', error);
+    } finally {
+      await queryRunner.release();
+    }
+  }
+
+  async deleteRelations() {
+    const queryRunner = this.dataSource.createQueryRunner();
+    await queryRunner.connect();
+
+    try {
+      // Drop views first
+      await queryRunner.query(
+        'DROP VIEW IF EXISTS "pg_stat_statements_info" CASCADE',
+      );
+
+      // Drop tables next
+      await queryRunner.query('DROP TABLE IF EXISTS "ticket" CASCADE');
+      await queryRunner.query('DROP TABLE IF EXISTS "user" CASCADE');
+
+      // Add any other tables or views you need to drop here
+    } catch (error) {
+      console.error('Error deleting all relations:', error);
+      throw error;
     } finally {
       await queryRunner.release();
     }

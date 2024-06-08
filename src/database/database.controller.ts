@@ -10,4 +10,9 @@ export class DatabaseController {
     await this.databaseService.deleteAllRelations();
     return { message: 'All tables deleted successfully' };
   }
+
+  @Delete('relations')
+  async deleteRelations() {
+    return this.databaseService.deleteAllRelations();
+  }
 }
