@@ -54,7 +54,7 @@ export class UserController {
   }
 
   @Post('/appove-user-doc')
-  @UseGuards(IsAdminGuard)  
+  @UseGuards(IsAdminGuard)
   async approveUserDoc(@Body('userEmail') email: string) {
     return this.userServices.approveUserDocument(email);
   }
@@ -63,5 +63,10 @@ export class UserController {
   @UseGuards(IsAdminGuard)
   async rejectUserDoc(@Body('userEmail') email: string) {
     return this.userServices.adminRejectionOfDocument(email);
+  }
+
+  @Delete('/delete/all-users')
+  async deleteAllUsers() {
+    return this.userServices.deleteAllUsers();
   }
 }
