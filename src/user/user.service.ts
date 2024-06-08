@@ -190,4 +190,17 @@ export class UserService {
       throw new Error('User not found');
     }
   }
+
+  async deleteAllUsers() {
+    try {
+      await this.userRepository.delete({});
+      return {
+        message: 'All Users deleted successfully',
+      };
+    } catch (error) {
+      throw new Error(`Error deleting all users: ${error.message}`);
+    }
+  }
+
+  
 }

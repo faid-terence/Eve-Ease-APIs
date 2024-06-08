@@ -16,6 +16,8 @@ import { SubscribersModule } from './subscribers/subscribers.module';
 import { MessagesModule } from './messages/messages.module';
 // import { FlutterwaveModule } from './flutterwave/flutterwave.module';
 import { ReviewsModule } from './reviews/reviews.module';
+import { DatabaseService } from './database/database.service';
+import { DatabaseController } from './database/database.controller';
 
 @Module({
   imports: [
@@ -47,7 +49,7 @@ import { ReviewsModule } from './reviews/reviews.module';
     ReviewsModule,
     // FlutterwaveModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [AppController, DatabaseController],
+  providers: [AppService, DatabaseService],
 })
 export class AppModule {}
