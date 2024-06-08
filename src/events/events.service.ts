@@ -70,17 +70,17 @@ export class EventsService {
       if (!organizer) {
         throw new NotFoundException('Organizer not found');
       }
-      if (!organizer.document) {
-        throw new BadRequestException(
-          'Organizer must upload identification document before creating an event',
-        );
-      }
+      // if (!organizer.document) {
+      //   throw new BadRequestException(
+      //     'Organizer must upload identification document before creating an event',
+      //   );
+      // }
 
-      if (organizer.isDocumentUploaded == false) {
-        throw new BadRequestException(
-          'Documnent not Approved, Please wait for approval',
-        );
-      }
+      // if (organizer.isDocumentUploaded == false) {
+      //   throw new BadRequestException(
+      //     'Documnent not Approved, Please wait for approval',
+      //   );
+      // }
       const newEvent = await this.eventRepository.create({
         Event_Name: EventName,
         Event_Description: EventDescription,
